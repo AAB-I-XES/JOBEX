@@ -1,9 +1,8 @@
-import { Suspense, lazy, useState, useEffect } from 'react';
+import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import { useAuth } from './hooks/api/useAuth';
 import AuthGuard from './components/common/AuthGuard';
-import { useUserStore } from './store/useUserStore';
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
