@@ -25,9 +25,8 @@ const App: React.FC = () => {
 const AppContent: React.FC = () => {
   const { isLoading, user } = useAuth();
 
-  // If we are still checking the session, show the login page as the splash
-  // Now within the context of <Router> via App wrapper
-  if (isLoading) {
+  // If we are checking the session, show nothing or the login page to avoid the redirect flicker
+  if (isLoading && !user) {
     return (
       <Suspense fallback={null}>
         <Login />
@@ -38,7 +37,7 @@ const AppContent: React.FC = () => {
   return (
     <Suspense fallback={null}>
       <Routes>
-        {/* If user is logged in, redirect away from login */}
+        {/* If user is logged in, redirect away from login automatically */}
         <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
         
         <Route path="/" element={<MainLayout />}>
@@ -66,7 +65,7 @@ const AppContent: React.FC = () => {
         </Route>
 
         {/* Fallback for deep links if guest */}
-        {!user && <Route path="*" element={<Navigate to="/login" replace />} />}
+        <Route path="*" element={user ? <Navigate to="/" replace /> : <Navigate to="/login" replace />} />
       </Routes>
     </Suspense>
   );

@@ -1,47 +1,50 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { supabase } from '../../lib/supabaseClient';
 import { authService } from '../../features/auth/authService';
 import { useUserStore } from '../../store/useUserStore';
 
 export const useAuth = () => {
   const { user, setUser, setLoading, isLoading } = useUserStore();
+  const isInitialCheckDone = useRef(false);
 
   useEffect(() => {
-    let mounted = true;
-
+    // 1. Initial Session Sync
     const initAuth = async () => {
-      console.log('[Auth] Initializing session check...');
+      if (isInitialCheckDone.current) return;
+      
+      console.log('[Auth] Running initial session sync...');
       setLoading(true);
       
       try {
-        // Fallback timeout to prevent permanent lock if service is unresponsive
-        const timeout = setTimeout(() => {
-          if (mounted && isLoading) {
-            console.warn('[Auth] Initialization taking too long, forcing ready state.');
-            setLoading(false);
-          }
-        }, 5000);
-
         const currentUser = await authService.getCurrentUser();
-        clearTimeout(timeout);
-        
-        if (mounted) {
-          console.log('[Auth] Check complete. User:', currentUser ? currentUser.email : 'Guest');
-          setUser(currentUser);
-        }
+        setUser(currentUser);
+        console.log('[Auth] Sync complete. User:', currentUser?.email || 'Guest');
       } catch (err) {
-        console.error('[Auth] Check failed:', err);
-        if (mounted) {
-          setUser(null);
-        }
+        console.error('[Auth] Sync failed:', err);
+        setUser(null);
       } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+        setLoading(false);
+        isInitialCheckDone.current = true;
       }
     };
 
     initAuth();
-    return () => { mounted = false; };
+
+    // 2. Listen for Auth State Changes (Critical for OAuth Redirects)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('[Auth] State Change Detected:', event);
+      
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        const currentUser = await authService.getCurrentUser();
+        setUser(currentUser);
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [setUser, setLoading]);
 
   const signOut = async (): Promise<void> => {
