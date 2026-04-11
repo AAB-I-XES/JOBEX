@@ -33,6 +33,8 @@ export const authService = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
 
+    console.log('[AuthService] User found in Auth:', user.email);
+
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
@@ -40,19 +42,30 @@ export const authService = {
       .single();
 
     if (error) {
-      // If profile doesn't exist, create it
+      console.error('[AuthService] Profile fetch error:', error);
+      // If profile doesn't exist, create it manually as a fallback to the DB trigger
       if (error.code === 'PGRST116') {
         const newProfile = {
           id: user.id,
           email: user.email,
-          full_name: user.user_metadata.full_name,
-          avatar_url: user.user_metadata.avatar_url,
-          created_at: new Date().toISOString(),
+          full_name: user.user_metadata?.full_name || user.email?.split('@')[0],
+          avatar_url: user.user_metadata?.avatar_url || `https://picsum.photos/seed/${user.id}/200/200`,
         };
-        await supabase.from('profiles').insert(newProfile);
-        return newProfile as User;
+        console.log('[AuthService] Creating missing profile:', newProfile.full_name);
+        const { data: insertedData, error: insertError } = await supabase
+          .from('profiles')
+          .insert(newProfile)
+          .select()
+          .single();
+        
+        if (insertError) {
+          console.error('[AuthService] Profile creation failed:', insertError);
+          // Return a basic user object even if insert fails, to prevent login lock
+          return newProfile as User;
+        }
+        return insertedData as User;
       }
-      throw error;
+      return null;
     }
 
     return data as User;

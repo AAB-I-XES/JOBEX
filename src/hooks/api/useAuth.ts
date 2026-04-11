@@ -17,8 +17,13 @@ export const useAuth = () => {
       
       try {
         const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
-        console.log('[Auth] Sync complete. User:', currentUser?.email || 'Guest');
+        if (currentUser) {
+          setUser(currentUser);
+          console.log('[Auth] Initial sync found user:', currentUser.email);
+        } else {
+          console.log('[Auth] Initial sync: Guest mode');
+          setUser(null);
+        }
       } catch (err) {
         console.error('[Auth] Sync failed:', err);
         setUser(null);
@@ -34,11 +39,14 @@ export const useAuth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('[Auth] State Change Detected:', event);
       
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        const currentUser = await authService.getCurrentUser();
-        setUser(currentUser);
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+        if (session?.user) {
+          const currentUser = await authService.getCurrentUser();
+          setUser(currentUser);
+        }
       } else if (event === 'SIGNED_OUT') {
         setUser(null);
+        setLoading(false);
       }
     });
 
