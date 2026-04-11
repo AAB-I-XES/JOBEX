@@ -15,10 +15,18 @@ const PostGig = lazy(() => import('./pages/PostGig'));
 const Login = lazy(() => import('./pages/Login'));
 
 const App: React.FC = () => {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+};
+
+const AppContent: React.FC = () => {
   const { isLoading, user } = useAuth();
 
   // If we are still checking the session, show the login page as the splash
-  // This satisfies the requirement of showing the login page first.
+  // Now within the context of <Router> via App wrapper
   if (isLoading) {
     return (
       <Suspense fallback={null}>
@@ -28,41 +36,39 @@ const App: React.FC = () => {
   }
 
   return (
-    <Router>
-      <Suspense fallback={null}>
-        <Routes>
-          {/* If user is logged in, redirect away from login */}
-          <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+    <Suspense fallback={null}>
+      <Routes>
+        {/* If user is logged in, redirect away from login */}
+        <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
+        
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Home />} />
+          <Route path="explore" element={<Explore />} />
+          <Route path="gig/:id" element={<GigDetails />} />
           
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Home />} />
-            <Route path="explore" element={<Explore />} />
-            <Route path="gig/:id" element={<GigDetails />} />
-            
-            {/* Protected Routes */}
-            <Route path="dashboard" element={
-              <AuthGuard>
-                <Dashboard />
-              </AuthGuard>
-            } />
-            <Route path="messages" element={
-              <AuthGuard>
-                <Messages />
-              </AuthGuard>
-            } />
-            <Route path="profile" element={<Profile />} />
-            <Route path="upload" element={
-              <AuthGuard>
-                <PostGig />
-              </AuthGuard>
-            } />
-          </Route>
+          {/* Protected Routes */}
+          <Route path="dashboard" element={
+            <AuthGuard>
+              <Dashboard />
+            </AuthGuard>
+          } />
+          <Route path="messages" element={
+            <AuthGuard>
+              <Messages />
+            </AuthGuard>
+          } />
+          <Route path="profile" element={<Profile />} />
+          <Route path="upload" element={
+            <AuthGuard>
+              <PostGig />
+            </AuthGuard>
+          } />
+        </Route>
 
-          {/* Fallback for deep links if guest */}
-          {!user && <Route path="*" element={<Navigate to="/login" replace />} />}
-        </Routes>
-      </Suspense>
-    </Router>
+        {/* Fallback for deep links if guest */}
+        {!user && <Route path="*" element={<Navigate to="/login" replace />} />}
+      </Routes>
+    </Suspense>
   );
 };
 
