@@ -30,7 +30,7 @@ const AppContent: React.FC = () => {
   if (isLoading) {
     return (
       <Suspense fallback={null}>
-        <Login isInitializing />
+        <Login />
       </Suspense>
     );
   }

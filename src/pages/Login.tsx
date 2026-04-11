@@ -1,22 +1,16 @@
 import React, { useState } from 'react';
-import { Mail, ArrowRight, Globe, ShieldCheck, Sparkles, Loader2 } from 'lucide-react';
+import { Mail, ArrowRight, Globe, ShieldCheck, Sparkles } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { authService } from '../features/auth/authService';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useUserStore } from '../store/useUserStore';
 
-interface LoginProps {
-  isInitializing?: boolean;
-}
-
-const Login: React.FC<LoginProps> = ({ isInitializing }) => {
+const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { setLoading } = useUserStore();
 
   const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,14 +56,6 @@ const Login: React.FC<LoginProps> = ({ isInitializing }) => {
         </div>
 
         <div className="relative group">
-           {/* Initializing Overlay */}
-           {isInitializing && (
-             <div className="absolute inset-0 z-50 rounded-[3rem] bg-zinc-900/80 backdrop-blur-md flex flex-col items-center justify-center gap-4 border border-primary/20 animate-in fade-in duration-500">
-                <Loader2 className="w-10 h-10 text-primary animate-spin" />
-                <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">Syncing Session</span>
-             </div>
-           )}
-
             <div className="bg-surface-container-low p-10 rounded-[3rem] border border-white/5 shadow-[0_40px_100px_rgba(0,0,0,0.6)] space-y-8 relative overflow-hidden">
                 <div className="absolute -right-8 -top-8 w-24 h-24 bg-primary/5 rounded-full blur-2xl" />
                 
@@ -117,13 +103,7 @@ const Login: React.FC<LoginProps> = ({ isInitializing }) => {
 
         <div className="mt-10 text-center space-y-6">
            <button 
-             onClick={() => {
-                if (isInitializing) {
-                    setLoading(false);
-                } else {
-                    navigate('/');
-                }
-             }}
+             onClick={() => navigate('/')}
              className="text-on-surface-variant hover:text-white transition-all text-[11px] font-black uppercase tracking-[0.3em] opacity-40 hover:opacity-100 flex items-center gap-2 mx-auto active:scale-95"
            >
              Continue as Guest <ArrowRight size={12} />
