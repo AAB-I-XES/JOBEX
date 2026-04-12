@@ -75,8 +75,8 @@ const Login: React.FC = () => {
                <Sparkles size={14} className="text-primary group-hover:rotate-12 transition-transform" />
                <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Join the Elite</span>
             </div>
-            <h1 className="text-6xl font-black tracking-tighter text-white mb-2 italic">SkillTok</h1>
-            <p className="text-on-surface-variant font-bold text-xs uppercase tracking-widest opacity-60">Creative Commerce Redefined</p>
+            <h1 className="text-6xl font-black tracking-tighter text-white mb-2 italic">jobex</h1>
+            <p className="text-on-surface-variant font-bold text-xs uppercase tracking-widest opacity-60">Future of Work, Today</p>
           </div>
 
           <div className="relative group">
@@ -105,7 +105,7 @@ const Login: React.FC = () => {
                       <Input 
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          placeholder="architect@skilltok.com"
+                          placeholder="architect@jobex.ai"
                           type="email"
                           icon={<Mail size={18} className="text-primary" />}
                       />

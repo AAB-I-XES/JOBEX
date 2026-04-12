@@ -65,39 +65,39 @@ const Navbar: React.FC = () => {
         "fixed top-0 w-full z-50 transition-all duration-500 px-4 md:px-8 py-3",
         isScrolled ? "pt-4" : "pt-6"
     )}>
-      <div className={cn(
+        <div className={cn(
         "max-w-7xl mx-auto flex items-center justify-between transition-all duration-500",
         "h-16 px-6 relative",
-        "rounded-[2rem] border border-white/5 bg-background/40 backdrop-blur-3xl shadow-2xl",
-        isScrolled ? "bg-zinc-900/80 border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)]" : "bg-transparent border-transparent"
+        "rounded-[2.5rem] border border-white/5 bg-background/20 backdrop-blur-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]",
+        isScrolled ? "bg-zinc-900/60 border-white/10 ring-1 ring-white/5" : "bg-transparent border-transparent"
       )}>
         
         {/* Brand Section */}
         <Link to="/" className="flex items-center gap-4 active:scale-95 transition-all group">
           <div className="relative">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-primary to-secondary p-[1px] group-hover:rotate-6 transition-transform">
-               <div className="w-full h-full rounded-2xl bg-background flex items-center justify-center overflow-hidden">
-                  <span className="text-primary font-black text-xl leading-none">S</span>
+            <div className="w-11 h-11 rounded-2xl bg-gradient-to-tr from-primary via-primary/80 to-secondary p-[1px] group-hover:rotate-6 transition-transform shadow-lg shadow-primary/20">
+               <div className="w-full h-full rounded-2xl bg-background/90 flex items-center justify-center overflow-hidden">
+                  <span className="text-primary font-black text-2xl leading-none italic">J</span>
                </div>
             </div>
-            <div className="absolute -inset-1 bg-primary/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute -inset-2 bg-primary/20 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           <div className="hidden sm:flex flex-col leading-none">
-             <span className="text-xl font-black text-white tracking-tighter">SkillTok</span>
-             <span className="text-[7px] font-black text-primary/60 uppercase tracking-[0.4em] mt-0.5">Vertical Elite</span>
+             <span className="text-2xl font-black text-white tracking-[-0.05em] transition-all group-hover:tracking-normal">jobex</span>
+             <span className="text-[6.5px] font-bold text-primary/40 uppercase tracking-[0.5em] mt-1">Marketplace 2.0</span>
           </div>
         </Link>
 
         {/* Search Bar Shortcut (Desktop) */}
         <div 
            onClick={() => navigate('/explore')}
-           className="hidden lg:flex items-center gap-3 bg-white/5 border border-white/5 rounded-2xl px-4 py-2 hover:bg-white/10 hover:border-white/10 transition-all cursor-pointer group"
+           className="hidden lg:flex items-center gap-4 bg-white/[0.03] border border-white/5 rounded-2xl px-5 py-2.5 hover:bg-white/[0.08] hover:border-white/10 transition-all cursor-pointer group backdrop-blur-md"
         >
           <Search size={16} className="text-on-surface-variant group-hover:text-primary transition-colors" />
-          <span className="text-[10px] font-black text-on-surface-variant uppercase tracking-widest">Global Search</span>
-          <div className="flex items-center gap-1 bg-white/5 px-1.5 py-0.5 rounded-md border border-white/5">
-             <Command size={10} className="text-white/40" />
-             <span className="text-[8px] font-bold text-white/40">K</span>
+          <span className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em] group-hover:text-white/70 transition-colors">Find Opportunities</span>
+          <div className="flex items-center gap-1.5 bg-background/80 px-2 py-0.5 rounded-lg border border-white/5 shadow-inner">
+             <Command size={10} className="text-white/30" />
+             <span className="text-[9px] font-black text-white/30 tracking-tighter">K</span>
           </div>
         </div>
 

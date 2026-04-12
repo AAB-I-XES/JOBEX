@@ -10,8 +10,8 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({ 
-  title = "SkillTok | The Vertical Freelance Marketplace", 
-  description = "Hire top creators for vertical-first skills. High-impact motion design, development, and content creation.",
+  title = "jobex | The Next-Gen Freelance Marketplace", 
+  description = "Connect with elite talent and find premium gig opportunities on jobex.",
   keywords = "freelance, gig economy, vertical video, tiktok economy, creators, motion design",
   image = "/og-image.jpg",
   url = window.location.href
