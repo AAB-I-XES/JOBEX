@@ -56,6 +56,12 @@ const Login: React.FC = () => {
           />
           {/* Subtle overlay to prevent interaction with the 3D scene if desired, or leave it interactive */}
           <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-transparent to-background/20" />
+          
+          {/* Strategic design element to mask the Spline watermark */}
+          <div className="absolute bottom-6 right-6 flex items-center gap-3 px-4 py-2 rounded-xl bg-background/80 backdrop-blur-md border border-white/5 shadow-2xl pointer-events-none">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.2em]">Engine v4.0.2 Active</span>
+          </div>
         </motion.div>
 
         {/* Right Side: Login Card */}
