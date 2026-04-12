@@ -49,7 +49,17 @@ export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
                 </div>
             }
         >
-            <Spline scene={scene} className={className} onLoad={onLoad} />
+            <Spline 
+                scene={scene} 
+                className={className} 
+                onLoad={(app) => {
+                    if (app.canvas) {
+                        app.canvas.style.backgroundColor = 'transparent';
+                    }
+                    onLoad?.(app);
+                }} 
+                style={{ background: 'transparent' }}
+            />
         </Suspense>
     );
 }
