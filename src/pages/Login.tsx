@@ -10,19 +10,37 @@ import { SplineScene } from '../components/common/SplineScene';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [authMethod, setAuthMethod] = useState<'magic' | 'password'>('password');
+  const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
 
-  const handleMagicLink = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return toast.error('Please enter your email');
     
     setIsLoading(true);
     try {
-      await authService.signUp(email);
-      toast.success('Magic link sent! Check your inbox.');
+      if (authMethod === 'magic') {
+          await authService.signInWithMagicLink(email);
+          toast.success('Magic link sent! Check your inbox.');
+      } else {
+          if (!password) {
+              toast.error('Please enter your password');
+              setIsLoading(false);
+              return;
+          }
+          if (isSignUp) {
+              await authService.signUpWithPassword(email, password);
+              toast.success('Account created! Check your email for verification.');
+          } else {
+              await authService.signInWithPassword(email, password);
+              toast.success('Welcome back!');
+          }
+      }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send magic link');
+      toast.error(err.message || 'Authentication failed');
     } finally {
       setIsLoading(false);
     }
@@ -96,26 +114,70 @@ const Login: React.FC = () => {
 
                   <div className="flex items-center gap-4">
                       <div className="h-px flex-1 bg-white/5" />
-                      <span className="text-[9px] font-black text-on-surface-variant uppercase tracking-[0.2em] opacity-30">Universal Access</span>
+                      <div className="flex flex-col items-center gap-1 px-2">
+                        <span className="text-[9px] font-black text-on-surface-variant uppercase tracking-[0.2em] opacity-30">Universal Access</span>
+                        <div className="flex items-center gap-2 mt-2">
+                            <button 
+                                onClick={() => setAuthMethod('password')}
+                                className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md transition-all ${authMethod === 'password' ? 'bg-primary/20 text-primary' : 'text-white/20 hover:text-white/40'}`}
+                            >
+                                Password
+                            </button>
+                            <button 
+                                onClick={() => setAuthMethod('magic')}
+                                className={`text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-md transition-all ${authMethod === 'magic' ? 'bg-primary/20 text-primary' : 'text-white/20 hover:text-white/40'}`}
+                            >
+                                Magic Link
+                            </button>
+                        </div>
+                      </div>
                       <div className="h-px flex-1 bg-white/5" />
                   </div>
 
-                  {/* Magic Link Form */}
-                  <form onSubmit={handleMagicLink} className="space-y-4">
-                      <Input 
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          placeholder="architect@jobex.ai"
-                          type="email"
-                          icon={<Mail size={18} className="text-primary" />}
-                      />
+                  {/* Auth Form */}
+                  <form onSubmit={handleAuth} className="space-y-4">
+                      <div className="space-y-3">
+                        <Input 
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email or Username"
+                            type="email"
+                            icon={<Mail size={18} className="text-primary" />}
+                        />
+                        {authMethod === 'password' && (
+                            <Input 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Security Cipher"
+                                type="password"
+                                icon={<ShieldCheck size={18} className="text-primary" />}
+                            />
+                        )}
+                      </div>
+                      
                       <Button 
                           type="submit"
                           isLoading={isLoading}
                           className="w-full h-16 rounded-2xl gap-3 font-black text-xs tracking-[0.2em] uppercase shadow-lg shadow-primary/20"
                       >
-                          REQUEST ACCESS <ArrowRight size={16} />
+                          {authMethod === 'magic' ? (
+                              <>REQUEST ACCESS <ArrowRight size={16} /></>
+                          ) : (
+                              isSignUp ? <>ESTABLISH IDENTITY <ArrowRight size={16} /></> : <>INITIATE SESSION <ArrowRight size={16} /></>
+                          )}
                       </Button>
+
+                      {authMethod === 'password' && (
+                          <div className="text-center pt-2">
+                              <button 
+                                type="button"
+                                onClick={() => setIsSignUp(!isSignUp)}
+                                className="text-[10px] font-black text-primary/60 hover:text-primary uppercase tracking-[0.1em] transition-colors"
+                              >
+                                {isSignUp ? 'Already have an identity? Login' : 'New to jobex? Create Identity'}
+                              </button>
+                          </div>
+                      )}
                   </form>
 
                   <div className="flex items-center justify-center gap-2 pt-2">

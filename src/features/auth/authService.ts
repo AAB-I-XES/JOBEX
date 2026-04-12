@@ -2,9 +2,30 @@ import { supabase } from '../../lib/supabaseClient';
 import type { User } from '../../types/user';
 
 export const authService = {
-  async signUp(email: string) {
+  async signInWithMagicLink(email: string) {
     const { data, error } = await supabase.auth.signInWithOtp({
       email,
+      options: {
+        emailRedirectTo: window.location.origin,
+      },
+    });
+    if (error) throw error;
+    return data;
+  },
+
+  async signInWithPassword(email: string, password: string) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    return data;
+  },
+
+  async signUpWithPassword(email: string, password: string) {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
       options: {
         emailRedirectTo: window.location.origin,
       },
