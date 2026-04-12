@@ -51,7 +51,7 @@ const Login: React.FC = () => {
           className="hidden lg:block w-full lg:w-1/2 h-[600px] relative"
         >
           <SplineScene 
-            scene="https://prod.spline.design/BSLeE3IPAydxFJKw/scene.splinecode"
+            scene="https://prod.spline.design/RN6nTQaeFPhVCgcL/scene.splinecode"
             className="w-full h-full"
           />
           {/* Subtle overlay to prevent interaction with the 3D scene if desired, or leave it interactive */}
