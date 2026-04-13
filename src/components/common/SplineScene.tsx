@@ -1,17 +1,12 @@
 /**
  * SplineScene — Production-ready lazy-loaded Spline wrapper
- *
- * Usage:
- *   <SplineScene
- *     scene="https://prod.spline.design/YOUR_ID/scene.splinecode"
- *     className="w-full h-full"
- *     onLoad={(app) => console.log('Ready!', app)}
- *   />
+ * 
+ * Optimized to prevent browser jank during heavy asset initialization.
  */
 
 'use client';
 
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState, useEffect, memo } from 'react';
 
 const Spline = lazy(() => import('@splinetool/react-spline'));
 
@@ -25,44 +20,74 @@ interface SplineSceneProps {
 }
 
 /**
- * A lazy-loaded Spline scene component.
- *
- * IMPORTANT: The parent container MUST have explicit width and height.
- * The Spline canvas expands to fill its parent — if the parent has
- * 0 height, you'll see nothing.
+ * A lazy-loaded Spline scene component with performance optimizations.
  */
-export function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
+export const SplineScene = memo(function SplineScene({ scene, className, onLoad }: SplineSceneProps) {
+    const [isMounted, setIsMounted] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
+
+    // Delay mounting the Spline component slightly to allow initial page animations
+    // and layout to settle, reducing the "stuck" feeling.
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setIsMounted(true);
+        }, 300);
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
-        <Suspense
-            fallback={
+        <div 
+            className="w-full h-full relative overflow-hidden" 
+            style={{ 
+                contain: 'content', 
+                background: 'transparent',
+                // Ensure a new stacking context and hardware acceleration hint
+                transform: 'translateZ(0)',
+                willChange: 'opacity',
+                // Prevent interactions while loading to avoid jank
+                pointerEvents: isLoaded ? 'auto' : 'none'
+            }}
+        >
+            {!isLoaded && (
                 <div
-                    style={{
-                        width: '100%',
-                        height: '100%',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                    className="absolute inset-0 z-20 flex items-center justify-center transition-opacity duration-300"
+                    style={{ 
                         background: 'transparent',
+                        opacity: isMounted ? 1 : 0 
                     }}
                 >
                     <LoadingSpinner />
                 </div>
-            }
-        >
-            <Spline 
-                scene={scene} 
-                className={className} 
-                onLoad={(app) => {
-                    if (app.canvas) {
-                        app.canvas.style.backgroundColor = 'transparent';
-                    }
-                    onLoad?.(app);
-                }} 
-                style={{ background: 'transparent' }}
-            />
-        </Suspense>
+            )}
+
+            {isMounted && (
+                <Suspense fallback={null}>
+                    <div 
+                        style={{ 
+                            width: '100%', 
+                            height: '100%',
+                            opacity: isLoaded ? 1 : 0,
+                            transition: 'opacity 0.5s ease-in-out'
+                        }}
+                    >
+                        <Spline 
+                            scene={scene} 
+                            className={className} 
+                            onLoad={(app) => {
+                                if (app.canvas) {
+                                    app.canvas.style.backgroundColor = 'transparent';
+                                }
+                                setIsLoaded(true);
+                                onLoad?.(app);
+                            }} 
+                            style={{ background: 'transparent' }}
+                        />
+                    </div>
+                </Suspense>
+            )}
+        </div>
     );
-}
+});
 
 /** Simple CSS spinner — no dependencies */
 function LoadingSpinner() {
@@ -71,8 +96,8 @@ function LoadingSpinner() {
             style={{
                 width: 40,
                 height: 40,
-                border: '3px solid rgba(255, 255, 255, 0.2)',
-                borderTopColor: '#fff',
+                border: '3px solid rgba(255, 255, 255, 0.1)',
+                borderTopColor: 'var(--primary, #0070f3)',
                 borderRadius: '50%',
                 animation: 'spline-spin 0.8s linear infinite',
             }}
