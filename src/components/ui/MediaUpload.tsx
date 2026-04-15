@@ -30,13 +30,13 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUploadSuccess }) => {
     if (!file) return;
 
     setIsUploading(true);
-    const loadingToast = toast.loading('Checking content for safety...');
+    const loadingToast = toast.loading('Uploading media...');
 
     try {
       const response = await uploadMedia(file);
 
       if (response.success) {
-        toast.success('Media approved and uploaded!', { id: loadingToast });
+        toast.success('Media uploaded successfully!', { id: loadingToast });
         setFile(null);
         setPreviewUrl(null);
         if (onUploadSuccess && response.url) {
