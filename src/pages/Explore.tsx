@@ -5,12 +5,17 @@ import Input from '../components/ui/Input';
 import GigCard from '../components/gig/GigCard';
 import { useGigStore } from '../store/useGigStore';
 import { GigCategory } from '../types/gig';
+import { useGigs } from '../hooks/api/useGigs';
 
 const categories = Object.values(GigCategory);
 
 const Explore: FC = () => {
   const { filteredGigs, searchQuery, setSearchQuery } = useGigStore();
   const [activeCategory, setActiveCategory] = useState<GigCategory | 'All'>('All');
+  const { isLoading, error } = useGigs();
+  const visibleGigs = activeCategory === 'All'
+    ? filteredGigs
+    : filteredGigs.filter((gig) => gig.category === activeCategory);
 
   return (
     <div className="pt-20 px-4 max-w-2xl mx-auto min-h-screen pb-32 overflow-y-auto no-scrollbar">
@@ -52,18 +57,30 @@ const Explore: FC = () => {
       {/* Grid */}
       <div className="grid grid-cols-2 gap-4">
         <div className="col-span-1 space-y-4">
-          {filteredGigs.filter((_, idx) => idx % 2 === 0).map(gig => (
+          {visibleGigs.filter((_, idx) => idx % 2 === 0).map(gig => (
             <GigCard key={gig.id} gig={gig} />
           ))}
         </div>
         <div className="col-span-1 space-y-4 pt-6">
-          {filteredGigs.filter((_, idx) => idx % 2 !== 0).map(gig => (
+          {visibleGigs.filter((_, idx) => idx % 2 !== 0).map(gig => (
             <GigCard key={gig.id} gig={gig} />
           ))}
         </div>
       </div>
 
-      {filteredGigs.length === 0 && (
+      {isLoading && (
+        <div className="py-20 text-center text-on-surface-variant">
+          Loading gigs...
+        </div>
+      )}
+
+      {error && (
+        <div className="py-20 text-center text-error">
+          Failed to load gigs. Please refresh.
+        </div>
+      )}
+
+      {!isLoading && !error && visibleGigs.length === 0 && (
         <div className="py-20 text-center text-on-surface-variant">
           No matches found for your search.
         </div>

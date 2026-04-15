@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, X, ShieldCheck, AlertTriangle, Loader2 } from 'lucide-react';
+import { Upload, X, ShieldCheck, AlertTriangle, Rocket } from 'lucide-react';
 import { uploadMedia } from '../../utils/uploadMedia';
 import Button from './Button';
 import { toast } from 'react-hot-toast';
@@ -17,6 +17,10 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUploadSuccess }) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
+      if (!selectedFile.type.startsWith('image/') && !selectedFile.type.startsWith('video/')) {
+        toast.error('Please select an image or video file.');
+        return;
+      }
       setFile(selectedFile);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -39,6 +43,7 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUploadSuccess }) => {
         toast.success('Media uploaded successfully!', { id: loadingToast });
         setFile(null);
         setPreviewUrl(null);
+        if (fileInputRef.current) fileInputRef.current.value = '';
         if (onUploadSuccess && response.url) {
           onUploadSuccess(response.url);
         }
@@ -124,13 +129,10 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUploadSuccess }) => {
           className="w-full h-16 rounded-2xl gap-3 text-lg font-black"
         >
           {isUploading ? (
-            <>
-              <Loader2 className="animate-spin" size={20} />
-              ANALYZING...
-            </>
+            <>UPLOADING...</>
           ) : (
             <>
-              VERIFY & UPLOAD
+              UPLOAD NOW
               <Rocket size={20} />
             </>
           )}
@@ -140,12 +142,10 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUploadSuccess }) => {
       <div className="px-4 py-3 bg-error/5 rounded-2xl border border-error/10 flex gap-3 items-center">
         <AlertTriangle size={16} className="text-error shrink-0" />
         <p className="text-[10px] font-bold text-error/80 leading-relaxed">
-          CONTENT POLICY: Explicit or offensive media is strictly prohibited and will be automatically blocked.
+          Upload limit is 50MB. Use clear images/videos for best results in Explore feed.
         </p>
       </div>
     </div>
   );
 };
-
-import { Rocket } from 'lucide-react';
 export default MediaUpload;

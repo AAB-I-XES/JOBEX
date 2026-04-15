@@ -48,7 +48,7 @@ export const useAuth = () => {
 
         // 2) Try to enrich from profiles with timeout.
         try {
-          const currentUser = await withTimeout(authService.getCurrentUser(), 5000);
+          const currentUser = await withTimeout(authService.getCurrentUser(), 8000);
           if (currentUser) {
             setUser(currentUser);
             console.log('[Auth] Initial sync found user:', currentUser.email);
@@ -77,11 +77,13 @@ export const useAuth = () => {
           if (session?.user) {
             const fallbackUser = mapSessionUserToUser(session.user);
             setUser(fallbackUser);
-            try {
-              const currentUser = await withTimeout(authService.getCurrentUser(), 5000);
-              if (currentUser) setUser(currentUser);
-            } catch (profileErr) {
-              console.warn('[Auth] State-change profile sync timed out/failed:', profileErr);
+            if (event === 'SIGNED_IN') {
+              try {
+                const currentUser = await withTimeout(authService.getCurrentUser(), 8000);
+                if (currentUser) setUser(currentUser);
+              } catch {
+                // Keep the session user and skip noisy timeout logs on transient network issues.
+              }
             }
           } else {
             setUser(null);

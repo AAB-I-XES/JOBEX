@@ -3,17 +3,33 @@ import type { Gig, GigCategory } from '../../types/gig';
 
 export const gigService = {
   async getGigs(category?: GigCategory): Promise<Gig[]> {
-    let query = supabase.from('gigs').select('*, profiles(full_name, avatar_url, title)');
-    
+    let queryWithProfile = supabase
+      .from('gigs')
+      .select('*, profiles(full_name, avatar_url, title)')
+      .eq('status', 'active');
+
     if (category) {
-      query = query.eq('category', category);
+      queryWithProfile = queryWithProfile.eq('category', category);
     }
 
-    const { data, error } = await query.order('created_at', { ascending: false });
-    if (error) throw error;
-    
-    // Using explicit cast but ensuring it matches the interface
-    return (data as unknown) as Gig[];
+    const { data, error } = await queryWithProfile.order('created_at', { ascending: false });
+    if (!error) {
+      return (data as unknown) as Gig[];
+    }
+
+    // Fallback: if relation/RLS around joined profile fails, fetch gig rows only.
+    let fallbackQuery = supabase
+      .from('gigs')
+      .select('*')
+      .eq('status', 'active');
+
+    if (category) {
+      fallbackQuery = fallbackQuery.eq('category', category);
+    }
+
+    const { data: fallbackData, error: fallbackError } = await fallbackQuery.order('created_at', { ascending: false });
+    if (fallbackError) throw fallbackError;
+    return (fallbackData as unknown) as Gig[];
   },
 
   async getGigById(id: string): Promise<Gig> {
