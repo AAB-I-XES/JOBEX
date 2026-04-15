@@ -29,7 +29,7 @@ const HomeFeed: React.FC = () => {
   return (
     <div className="h-full w-full overflow-y-scroll snap-y snap-mandatory no-scrollbar scroll-smooth">
       {/* Seller Updates Story Bar */}
-      <div className="fixed top-14 w-full z-40 bg-zinc-900/70 backdrop-blur-lg flex gap-4 px-6 py-2 overflow-x-auto no-scrollbar border-b border-white/5 pb-3">
+      <div className="fixed top-[88px] w-full z-40 bg-zinc-900/70 backdrop-blur-lg flex gap-4 px-6 py-2 overflow-x-auto no-scrollbar border-b border-white/5 pb-3">
         <div className="flex flex-col items-center gap-1 min-w-[56px] opacity-100">
           <div className="w-12 h-12 rounded-full p-[2px] bg-gradient-to-tr from-yellow-400 to-primary">
             <div className="w-full h-full rounded-full border-2 border-black overflow-hidden">
@@ -76,7 +76,7 @@ const HomeFeed: React.FC = () => {
           </div>
 
           {/* Content Overlay */}
-          <div className="relative z-10 w-full px-6 pb-44 flex justify-between items-end">
+          <div className="relative z-10 w-full px-6 pb-52 flex justify-between items-end">
             <div className="max-w-[75%] space-y-4">
               <div className="flex flex-wrap gap-2">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-panel border border-white/10">
@@ -125,7 +125,7 @@ const HomeFeed: React.FC = () => {
           </div>
 
           {/* Buy Button */}
-          <div className="absolute bottom-28 left-0 w-full px-6 z-40">
+          <div className="absolute bottom-[112px] left-0 w-full px-6 z-40">
             <button className="w-full h-14 primary-glow-button rounded-2xl flex items-center justify-between px-6 active:scale-[0.97] transition-all">
               <div className="flex flex-col items-start">
                 <span className="text-[10px] font-bold text-on-primary-container/80 tracking-widest uppercase">Quick Purchase</span>

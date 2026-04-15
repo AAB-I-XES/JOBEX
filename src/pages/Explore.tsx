@@ -18,7 +18,7 @@ const Explore: FC = () => {
     : filteredGigs.filter((gig) => gig.category === activeCategory);
 
   return (
-    <div className="pt-20 px-4 max-w-2xl mx-auto min-h-screen pb-32 overflow-y-auto no-scrollbar">
+    <div className="pt-24 px-4 max-w-2xl mx-auto min-h-screen pb-32 overflow-y-auto no-scrollbar">
       {/* Search */}
       <section className="mb-8 mt-4">
         <Input 

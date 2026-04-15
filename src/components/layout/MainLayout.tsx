@@ -27,7 +27,7 @@ const MainLayout: React.FC = () => {
       <BottomNav />
       
       {/* AI Assistant Button */}
-      <button className="fixed right-6 bottom-44 z-[60] w-12 h-12 rounded-full bg-surface-container-highest border border-primary/30 flex items-center justify-center shadow-2xl active:scale-90 transition-transform">
+      <button className="fixed right-6 bottom-64 z-[60] w-12 h-12 rounded-full bg-surface-container-highest border border-primary/30 flex items-center justify-center shadow-2xl active:scale-90 transition-transform">
         <div className="absolute inset-0 rounded-full bg-primary/10 animate-pulse"></div>
         <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
           auto_awesome
