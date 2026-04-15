@@ -87,6 +87,8 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUploadSuccess }) => {
       >
         <input 
           type="file" 
+          title="Upload image or video file"
+          aria-label="Upload image or video file"
           ref={fileInputRef} 
           onChange={handleFileChange} 
           accept="image/*,video/*" 
@@ -102,6 +104,9 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUploadSuccess }) => {
             )}
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <button 
+                type="button"
+                title="Remove selected media"
+                aria-label="Remove selected media"
                 onClick={(e) => { e.stopPropagation(); clearSelection(); }}
                 className="w-12 h-12 rounded-full bg-error text-white flex items-center justify-center active:scale-90 transition-transform"
               >

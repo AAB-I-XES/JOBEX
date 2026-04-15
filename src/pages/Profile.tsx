@@ -8,11 +8,13 @@ import { useNavigate } from 'react-router-dom';
 import { authService } from '../features/auth/authService';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { useGigs } from '../hooks/api/useGigs';
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUserStore();
   const { gigs } = useGigStore();
+  useGigs();
   const [activeTab, setActiveTab] = useState<'gigs' | 'reviews'>('gigs');
   
   const handleSignOut = async () => {
@@ -40,7 +42,11 @@ const Profile: React.FC = () => {
               <img src={user.avatar_url || "https://picsum.photos/seed/elite/200/200"} alt="Profile" className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all" />
             </div>
           </div>
-          <button className="absolute bottom-2 right-2 bg-primary text-white rounded-full p-2.5 border-4 border-background flex items-center justify-center shadow-lg active:scale-90 transition-transform">
+          <button
+            title="Update profile photo"
+            aria-label="Update profile photo"
+            className="absolute bottom-2 right-2 bg-primary text-white rounded-full p-2.5 border-4 border-background flex items-center justify-center shadow-lg active:scale-90 transition-transform"
+          >
             <Plus size={20} strokeWidth={3} />
           </button>
         </div>

@@ -27,8 +27,15 @@ const PostGig: FC = () => {
   });
 
   const isFormValid = formData.title.length > 5 && formData.description.length > 20 && uploadedMediaUrl;
+  const isUploadedMediaVideo = !!uploadedMediaUrl && /\.(mp4|webm|mov|m4v|avi)(\?|$)/i.test(uploadedMediaUrl);
 
   const handleSubmit = async (): Promise<void> => {
+    if (!user?.id) {
+      toast.error('Please sign in before publishing a gig.');
+      navigate('/login');
+      return;
+    }
+
     if (!isFormValid) {
       toast.error('Please complete all fields and upload a safe showcase video.');
       return;
@@ -38,8 +45,8 @@ const PostGig: FC = () => {
     try {
       await gigService.createGig({
         ...formData,
-        user_id: user?.id!,
-        seller_id: user?.id!,
+        user_id: user.id,
+        seller_id: user.id,
         thumbnail_url: uploadedMediaUrl!,
         video_url: uploadedMediaUrl!,
         status: GigStatus.ACTIVE,
@@ -49,8 +56,8 @@ const PostGig: FC = () => {
       });
       toast.success('Your skill is now live on SkillTok!');
       navigate('/dashboard');
-    } catch (err) {
-      toast.error('Failed to publish gig.');
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to publish gig.');
       console.error(err);
     } finally {
       setIsSubmitting(false);
@@ -105,8 +112,9 @@ const PostGig: FC = () => {
 
              <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                   <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest px-1">Category</label>
+                   <label htmlFor="gig-category" className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest px-1">Category</label>
                    <select 
+                    id="gig-category"
                     name="category"
                     className="w-full bg-surface-container-lowest border border-white/10 rounded-xl h-14 px-4 text-on-surface outline-none appearance-none"
                     value={formData.category}
@@ -131,7 +139,18 @@ const PostGig: FC = () => {
            <div className="sticky top-24 space-y-8">
               <div className="aspect-[9/16] max-w-[320px] mx-auto rounded-[2.5rem] bg-zinc-900 overflow-hidden shadow-2xl relative border border-white/10 group">
                 {uploadedMediaUrl ? (
-                   <img src={uploadedMediaUrl} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="Preview" />
+                   isUploadedMediaVideo ? (
+                     <video
+                       src={uploadedMediaUrl}
+                       className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                       autoPlay
+                       muted
+                       loop
+                       playsInline
+                     />
+                   ) : (
+                     <img src={uploadedMediaUrl} className="w-full h-full object-cover transition-transform group-hover:scale-110" alt="Preview" />
+                   )
                 ) : (
                    <div className="absolute inset-0 flex items-center justify-center bg-zinc-800/50">
                       <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Awaiting Media</span>
