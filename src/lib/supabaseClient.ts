@@ -7,4 +7,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase credentials missing. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+const hasWindow = typeof window !== 'undefined';
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storageKey: 'jobex-auth',
+    storage: hasWindow ? window.localStorage : undefined,
+  },
+});
