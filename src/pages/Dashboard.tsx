@@ -4,8 +4,10 @@ import Button from '../components/ui/Button';
 import { formatPrice } from '../utils/helpers';
 import { useUserStore } from '../store/useUserStore';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useUserStore();
   const [activeSegment, setActiveSegment] = useState<'overview' | 'finance'>('overview');
 
@@ -127,7 +129,7 @@ const Dashboard: React.FC = () => {
         <section className="lg:col-span-2 space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-2xl font-black tracking-tight">Recent Activity</h3>
-            <Button variant="ghost" className="text-[10px] font-black tracking-widest uppercase text-on-surface-variant">History Archive</Button>
+            <Button onClick={() => navigate('/history')} variant="ghost" className="text-[10px] font-black tracking-widest uppercase text-on-surface-variant">History Archive</Button>
           </div>
           <div className="space-y-4">
             <TransactionItem label="Visual effects payment" amount={1200} date="2 mins ago" type="deposit" />
@@ -152,7 +154,7 @@ const Dashboard: React.FC = () => {
                 <MetricBar label="SLA Compliance" value="100%" />
              </div>
           </div>
-          <Button variant="outline" className="w-full h-20 rounded-[2rem] text-[11px] font-black tracking-[0.2em] gap-3 bg-white/5 border-white/10 hover:bg-white/10 uppercase">
+          <Button onClick={() => navigate('/settings')} variant="outline" className="w-full h-20 rounded-[2rem] text-[11px] font-black tracking-[0.2em] gap-3 bg-white/5 border-white/10 hover:bg-white/10 uppercase">
             <Settings size={20} /> Configure Workplace
           </Button>
         </section>

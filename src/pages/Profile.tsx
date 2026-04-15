@@ -65,7 +65,7 @@ const Profile: React.FC = () => {
                    <LayoutDashboard size={14} /> DASHBOARD
                 </Button>
                 <div className="flex gap-2">
-                   <Button variant="outline" size="sm" className="w-10 h-10 p-0 rounded-full bg-white/5 border-white/10 hover:bg-white/10">
+                   <Button onClick={() => navigate('/settings')} variant="outline" size="sm" className="w-10 h-10 p-0 rounded-full bg-white/5 border-white/10 hover:bg-white/10">
                      <Settings size={18} />
                    </Button>
                    <Button onClick={handleSignOut} variant="outline" size="sm" className="w-10 h-10 p-0 rounded-full bg-error/10 border-error/20 hover:bg-error/20 text-error">

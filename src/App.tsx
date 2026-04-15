@@ -14,6 +14,9 @@ const GigDetails = lazy(() => import('./pages/GigDetails'));
 const PostGig = lazy(() => import('./pages/PostGig'));
 const Login = lazy(() => import('./pages/Login'));
 const Notifications = lazy(() => import('./pages/Notifications'));
+const Settings = lazy(() => import('./pages/Settings'));
+const SavedGigs = lazy(() => import('./pages/SavedGigs'));
+const TransactionHistory = lazy(() => import('./pages/TransactionHistory'));
 
 const App: React.FC = () => {
   return (
@@ -68,6 +71,17 @@ const AppContent: React.FC = () => {
           } />
           <Route path="notifications" element={<Notifications />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="saved" element={
+            <AuthGuard>
+              <SavedGigs />
+            </AuthGuard>
+          } />
+          <Route path="history" element={
+            <AuthGuard>
+              <TransactionHistory />
+            </AuthGuard>
+          } />
           <Route path="upload" element={
             <AuthGuard>
               <PostGig />
