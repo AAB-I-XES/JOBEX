@@ -2,6 +2,24 @@ import { useEffect, useRef } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { authService } from '../../features/auth/authService';
 import { useUserStore } from '../../store/useUserStore';
+import type { User } from '../../types/user';
+
+const mapSessionUserToUser = (authUser: any): User => ({
+  id: authUser.id,
+  email: authUser.email ?? '',
+  full_name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Member',
+  avatar_url: authUser.user_metadata?.avatar_url || `https://picsum.photos/seed/${authUser.id}/200/200`,
+  created_at: authUser.created_at || new Date().toISOString(),
+});
+
+const withTimeout = async <T>(promise: Promise<T>, timeoutMs: number): Promise<T> => {
+  return await Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      setTimeout(() => reject(new Error(`Timeout after ${timeoutMs}ms`)), timeoutMs);
+    }),
+  ]);
+};
 
 export const useAuth = () => {
   const { user, setUser, setLoading, isLoading } = useUserStore();
@@ -16,14 +34,29 @@ export const useAuth = () => {
       setLoading(true);
       
       try {
-        const currentUser = await authService.getCurrentUser();
-        if (currentUser) {
-          setUser(currentUser);
-          console.log('[Auth] Initial sync found user:', currentUser.email);
-        } else {
+        // 1) Restore quickly from local persisted session.
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.user) {
           console.log('[Auth] Initial sync: Guest mode');
           setUser(null);
+          return;
         }
+
+        // Prevent blocking app startup on profiles query/network.
+        const fallbackUser = mapSessionUserToUser(session.user);
+        setUser(fallbackUser);
+
+        // 2) Try to enrich from profiles with timeout.
+        try {
+          const currentUser = await withTimeout(authService.getCurrentUser(), 5000);
+          if (currentUser) {
+            setUser(currentUser);
+            console.log('[Auth] Initial sync found user:', currentUser.email);
+          }
+        } catch (profileErr) {
+          console.warn('[Auth] Profile sync timed out/failed, using session user:', profileErr);
+        }
+        console.log('[Auth] Initial sync found session user:', fallbackUser.email);
       } catch (err) {
         console.error('[Auth] Sync failed:', err);
         setUser(null);
@@ -39,13 +72,24 @@ export const useAuth = () => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('[Auth] State Change Detected:', event);
       
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-        if (session?.user) {
-          const currentUser = await authService.getCurrentUser();
-          setUser(currentUser);
+      try {
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+          if (session?.user) {
+            const fallbackUser = mapSessionUserToUser(session.user);
+            setUser(fallbackUser);
+            try {
+              const currentUser = await withTimeout(authService.getCurrentUser(), 5000);
+              if (currentUser) setUser(currentUser);
+            } catch (profileErr) {
+              console.warn('[Auth] State-change profile sync timed out/failed:', profileErr);
+            }
+          } else {
+            setUser(null);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setUser(null);
         }
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
+      } finally {
         setLoading(false);
       }
     });
