@@ -1,17 +1,20 @@
-import React from 'react';
-import { Bookmark, Search, ArrowRight, Loader2 } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Bookmark, Search, ArrowRight } from 'lucide-react';
 import { useGigStore } from '../store/useGigStore';
 import GigCard from '../components/gig/GigCard';
 import Button from '../components/ui/Button';
 import { useNavigate } from 'react-router-dom';
 
 const SavedGigs: React.FC = () => {
-  const { gigs } = useGigStore();
+  const { gigs = [] } = useGigStore();
   const navigate = useNavigate();
   
-  // For demo, we'll just show all gigs that are "saved"
-  // In a real app we would have a saved_gigs junction table or array in profile
-  const savedGigs = gigs.slice(0, 3); // Simulated saved state for demo
+  useEffect(() => {
+    console.log('SavedGigs page mounted');
+  }, []);
+
+  // For demo, we'll just show the first few gigs as "saved"
+  const savedGigs = Array.isArray(gigs) ? gigs.slice(0, 3) : [];
 
   return (
     <div className="pt-24 pb-32 max-w-screen-md mx-auto px-6 min-h-screen">
@@ -31,9 +34,9 @@ const SavedGigs: React.FC = () => {
       </div>
 
       {savedGigs.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
           {savedGigs.map(gig => (
-            <div key={gig.id} className="relative group">
+            <div key={gig.id}>
                <GigCard gig={gig} />
             </div>
           ))}
@@ -58,10 +61,10 @@ const SavedGigs: React.FC = () => {
            </div>
            <div className="space-y-2">
               <h2 className="text-xl font-black text-white">Your vault is empty</h2>
-              <p className="text-on-surface-variant text-sm font-medium max-w-[240px] mx-auto opacity-60">Bookmark skills you love to easily find them later and compare prices.</p>
+              <p className="text-on-surface-variant text-sm font-medium max-w-[240px] mx-auto opacity-60">Bookmark skills you love to easily find them later.</p>
            </div>
            <Button onClick={() => navigate('/explore')} className="h-12 px-8 rounded-2xl text-[10px] font-black tracking-widest uppercase">
-              BRowse Marketplace
+              Browse Marketplace
            </Button>
         </div>
       )}

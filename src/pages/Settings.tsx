@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Settings as SettingsIcon, Shield, Bell, User, Lock, CreditCard, ChevronRight, Share2, Eye, ShieldCheck, HelpCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
@@ -6,15 +6,19 @@ import Button from '../components/ui/Button';
 const Settings: React.FC = () => {
   const navigate = useNavigate();
 
+  useEffect(() => {
+    console.log('Settings page mounted');
+  }, []);
+
   const sections = [
     {
       title: "Account Security",
       items: [
-        { icon: Shield, label: "Two-Factor Authentication", extra: "Highly Secure", color: "text-primary" },
+        { icon: Shield, label: "Two-Factor Authentication", extra: "Highly Secure" },
         { icon: Lock, label: "Password Management", extra: "Updated 2m ago" },
         { icon: ShieldCheck, label: "Login Activity", extra: "3 active sessions" }
       ]
-    }, // Group end
+    },
     {
       title: "Preferences",
       items: [
@@ -22,7 +26,7 @@ const Settings: React.FC = () => {
         { icon: Eye, label: "Privacy & Visibility", extra: "Public" },
         { icon: Share2, label: "Linked Accounts", extra: "Google connected" }
       ]
-    }, // Group end
+    },
      {
       title: "Payments",
       items: [
@@ -33,9 +37,9 @@ const Settings: React.FC = () => {
   ];
 
   return (
-    <div className="pt-24 pb-32 max-w-screen-md mx-auto px-6 min-h-screen overflow-y-auto no-scrollbar scroll-smooth">
+    <div className="pt-24 pb-32 max-w-screen-md mx-auto px-6 min-h-screen">
       <div className="flex items-center gap-4 mb-10">
-        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
+        <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-xl">
           <SettingsIcon size={24} />
         </div>
         <div>
@@ -48,14 +52,14 @@ const Settings: React.FC = () => {
         {sections.map((section, sIdx) => (
           <div key={sIdx} className="space-y-4">
              <h2 className="text-[10px] font-black text-primary uppercase tracking-[0.2em] px-2">{section.title}</h2>
-             <div className="bg-surface-container-low rounded-[2rem] border border-white/5 overflow-hidden shadow-xl">
+             <div className="bg-surface-container-low rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
                 {section.items.map((item, iIdx) => (
                   <button 
                     key={iIdx}
-                    className="w-full flex items-center justify-between p-5 hover:bg-white/5 transition-all text-left border-b border-white/5 last:border-0 group"
+                    className="w-full flex items-center justify-between p-6 hover:bg-white/5 transition-all text-left border-b border-white/5 last:border-0 group"
                   >
                     <div className="flex items-center gap-4">
-                       <div className={`w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center ${item.color || 'text-zinc-400'} group-hover:scale-110 transition-transform`}>
+                       <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-zinc-400 group-hover:scale-110 transition-transform">
                           <item.icon size={20} />
                        </div>
                        <div className="flex flex-col">

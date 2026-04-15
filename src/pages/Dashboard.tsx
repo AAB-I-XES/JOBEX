@@ -5,6 +5,7 @@ import { formatPrice } from '../utils/helpers';
 import { useUserStore } from '../store/useUserStore';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { cn } from '../utils/helpers';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -225,5 +226,4 @@ const MetricBar: React.FC<{ label: string; value: string }> = ({ label, value })
   </div>
 );
 
-import { cn } from '../utils/helpers';
 export default Dashboard;

@@ -14,9 +14,9 @@ const GigDetails = lazy(() => import('./pages/GigDetails'));
 const PostGig = lazy(() => import('./pages/PostGig'));
 const Login = lazy(() => import('./pages/Login'));
 const Notifications = lazy(() => import('./pages/Notifications'));
-const Settings = lazy(() => import('./pages/Settings'));
-const SavedGigs = lazy(() => import('./pages/SavedGigs'));
-const TransactionHistory = lazy(() => import('./pages/TransactionHistory'));
+import Settings from './pages/Settings';
+import SavedGigs from './pages/SavedGigs';
+import TransactionHistory from './pages/TransactionHistory';
 
 const App: React.FC = () => {
   return (
