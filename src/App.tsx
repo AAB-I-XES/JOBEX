@@ -27,11 +27,24 @@ const AppContent: React.FC = () => {
 
   // Wait for auth rehydration before rendering routes to avoid login flash.
   if (isLoading) {
-    return null;
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-10 h-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant opacity-70">
+            Restoring session
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="w-10 h-10 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+      </div>
+    }>
       <Routes>
         {/* If user is logged in, redirect away from login automatically */}
         <Route path="/login" element={user ? <Navigate to="/" replace /> : <Login />} />
