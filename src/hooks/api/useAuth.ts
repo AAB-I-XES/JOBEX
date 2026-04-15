@@ -39,12 +39,14 @@ export const useAuth = () => {
         if (!session?.user) {
           console.log('[Auth] Initial sync: Guest mode');
           setUser(null);
+          setLoading(false); // Unblock for guests
           return;
         }
 
         // Prevent blocking app startup on profiles query/network.
         const fallbackUser = mapSessionUserToUser(session.user);
         setUser(fallbackUser);
+        setLoading(false); // Unblock UI immediately after session exists
 
         // 2) Try to enrich from profiles with timeout.
         try {

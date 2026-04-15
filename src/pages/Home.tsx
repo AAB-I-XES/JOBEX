@@ -18,6 +18,7 @@ const Home: FC = () => {
     setIsRefreshing(false);
   };
 
+  // Only show full-screen loader if we have NO cached data and are currently loading.
   if (isLoading && gigs.length === 0) {
     return (
       <div className="h-screen w-full flex flex-col items-center justify-center bg-background">
@@ -48,6 +49,13 @@ const Home: FC = () => {
 
   return (
     <div className="h-screen w-full overflow-y-scroll snap-y snap-mandatory no-scrollbar scroll-smooth bg-background">
+       {/* Background Refreshing Indicator */}
+       {isLoading && gigs.length > 0 && (
+        <div className="fixed top-[72px] left-1/2 -translate-x-1/2 z-50 px-3 py-1 rounded-full bg-primary/20 backdrop-blur-md border border-primary/20 flex items-center gap-2">
+          <Loader2 className="w-3 h-3 text-primary animate-spin" />
+          <span className="text-[8px] font-bold text-primary uppercase tracking-widest">Updating</span>
+        </div>
+      )}
       {/* Story Bar */}
       <div className="fixed top-16 w-full z-40 bg-background/60 backdrop-blur-xl flex gap-4 px-6 py-3 overflow-x-auto no-scrollbar border-b border-white/5">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
