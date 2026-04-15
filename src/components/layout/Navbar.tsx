@@ -5,14 +5,13 @@ import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { cn } from '../../utils/helpers';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAuth } from '../../hooks/api/useAuth';
+import { authService } from '../../features/auth/authService';
 import Button from '../ui/Button';
 
 const Navbar: React.FC = () => {
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
   const navigate = useNavigate();
   const location = useLocation();
-  const { signOut } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -51,7 +50,8 @@ const Navbar: React.FC = () => {
 
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await authService.signOut();
+      setUser(null);
       toast.success("Signed out safely");
       setShowDropdown(false);
       navigate('/');

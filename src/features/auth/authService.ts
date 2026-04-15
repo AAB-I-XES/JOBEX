@@ -1,6 +1,14 @@
 import { supabase } from '../../lib/supabaseClient';
 import type { User } from '../../types/user';
 
+const mapAuthUserToUser = (authUser: any): User => ({
+  id: authUser.id,
+  email: authUser.email ?? '',
+  full_name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Member',
+  avatar_url: authUser.user_metadata?.avatar_url || `https://picsum.photos/seed/${authUser.id}/200/200`,
+  created_at: authUser.created_at || new Date().toISOString(),
+});
+
 export const authService = {
   async signInWithMagicLink(email: string) {
     const { data, error } = await supabase.auth.signInWithOtp({
@@ -51,15 +59,16 @@ export const authService = {
   },
 
   async getCurrentUser(): Promise<User | null> {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
+    const { data: { session } } = await supabase.auth.getSession();
+    const authUser = session?.user;
+    if (!authUser) return null;
 
-    console.log('[AuthService] User found in Auth:', user.email);
+    console.log('[AuthService] User found in Auth:', authUser.email);
 
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', user.id)
+      .eq('id', authUser.id)
       .single();
 
     if (error) {
@@ -67,10 +76,7 @@ export const authService = {
       // If profile doesn't exist, create it manually as a fallback to the DB trigger
       if (error.code === 'PGRST116') {
         const newProfile = {
-          id: user.id,
-          email: user.email,
-          full_name: user.user_metadata?.full_name || user.email?.split('@')[0],
-          avatar_url: user.user_metadata?.avatar_url || `https://picsum.photos/seed/${user.id}/200/200`,
+          ...mapAuthUserToUser(authUser),
         };
         console.log('[AuthService] Creating missing profile:', newProfile.full_name);
         const { data: insertedData, error: insertError } = await supabase
@@ -81,12 +87,12 @@ export const authService = {
         
         if (insertError) {
           console.error('[AuthService] Profile creation failed:', insertError);
-          // Return a basic user object even if insert fails, to prevent login lock
-          return newProfile as User;
+          return mapAuthUserToUser(authUser);
         }
         return insertedData as User;
       }
-      return null;
+      // Keep session-based login alive even when profiles query fails transiently.
+      return mapAuthUserToUser(authUser);
     }
 
     return data as User;

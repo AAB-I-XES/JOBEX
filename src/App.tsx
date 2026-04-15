@@ -25,13 +25,9 @@ const App: React.FC = () => {
 const AppContent: React.FC = () => {
   const { isLoading, user } = useAuth();
 
-  // If we are checking the session, show nothing or the login page to avoid the redirect flicker
-  if (isLoading && !user) {
-    return (
-      <Suspense fallback={null}>
-        <Login />
-      </Suspense>
-    );
+  // Wait for auth rehydration before rendering routes to avoid login flash.
+  if (isLoading) {
+    return null;
   }
 
   return (

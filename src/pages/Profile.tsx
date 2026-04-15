@@ -5,20 +5,20 @@ import GigCard from '../components/gig/GigCard';
 import { useGigStore } from '../store/useGigStore';
 import { CheckCircle, Settings, Plus, LayoutDashboard, LogOut, Star, ShieldCheck, Mail, ArrowRight, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/api/useAuth';
+import { authService } from '../features/auth/authService';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
 const Profile: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useUserStore();
+  const { user, setUser } = useUserStore();
   const { gigs } = useGigStore();
-  const { signOut } = useAuth();
   const [activeTab, setActiveTab] = useState<'gigs' | 'reviews'>('gigs');
   
   const handleSignOut = async () => {
     try {
-      await signOut();
+      await authService.signOut();
+      setUser(null);
       toast.success("Signed out successfully");
       navigate('/');
     } catch (err) {
