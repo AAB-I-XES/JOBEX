@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, Heart, Search, Menu, Command, User, LayoutDashboard, Settings, Bookmark, History, LogOut, ChevronRight, Moon } from 'lucide-react';
+import { Bell, Search, Menu, Command, User, LayoutDashboard, Settings, Bookmark, History, LogOut, ChevronRight, Moon } from 'lucide-react';
 import { useUserStore } from '../../store/useUserStore';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
-import { toast } from 'react-hot-toast';
 import { cn } from '../../utils/helpers';
 import { motion, AnimatePresence } from 'framer-motion';
 import { authService } from '../../features/auth/authService';
@@ -36,12 +35,13 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleNotifications = () => {
-    toast('System: 3 High-priority creative requests pending', { icon: '⚡' });
+    navigate('/notifications');
   };
 
   const menuItems = [
     { label: 'View Profile', icon: User, path: '/profile' },
     { label: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { label: 'Notifications', icon: Bell, path: '/notifications' },
     { label: 'Security & Privacy', icon: Settings, path: '/settings' },
     { label: 'Saved Gigs', icon: Bookmark, path: '/saved' },
     { label: 'Transaction History', icon: History, path: '/history' },
@@ -52,11 +52,11 @@ const Navbar: React.FC = () => {
     try {
       await authService.signOut();
       setUser(null);
-      toast.success("Signed out safely");
+      // use a non-blocking UX action here; route change confirms sign-out state.
       setShowDropdown(false);
       navigate('/');
     } catch (err) {
-      toast.error("Sign out failed");
+      console.error('Sign out failed', err);
     }
   };
 
@@ -112,7 +112,7 @@ const Navbar: React.FC = () => {
           <NavAction 
             onClick={() => navigate('/dashboard')} 
             active={location.pathname === '/dashboard'}
-            Icon={Heart} 
+            Icon={LayoutDashboard} 
           />
           
           <button 

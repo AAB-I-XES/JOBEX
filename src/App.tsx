@@ -13,6 +13,7 @@ const Profile = lazy(() => import('./pages/Profile'));
 const GigDetails = lazy(() => import('./pages/GigDetails'));
 const PostGig = lazy(() => import('./pages/PostGig'));
 const Login = lazy(() => import('./pages/Login'));
+const Notifications = lazy(() => import('./pages/Notifications'));
 
 const App: React.FC = () => {
   return (
@@ -65,6 +66,7 @@ const AppContent: React.FC = () => {
               <Messages />
             </AuthGuard>
           } />
+          <Route path="notifications" element={<Notifications />} />
           <Route path="profile" element={<Profile />} />
           <Route path="upload" element={
             <AuthGuard>
