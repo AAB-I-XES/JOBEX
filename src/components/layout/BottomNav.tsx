@@ -13,7 +13,7 @@ const BottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-lg rounded-[2.5rem] border border-white/10 bg-zinc-900/60 backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex justify-around items-center h-20 px-4 z-50">
+    <nav className="fixed bottom-0 left-0 w-full bg-zinc-900/95 border-t border-white/10 backdrop-blur-xl flex justify-around items-center h-16 px-4 z-50">
       {navItems.map(({ label, Icon, path, special }) => (
         <NavLink
           key={label}

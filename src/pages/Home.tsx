@@ -49,7 +49,7 @@ const Home: FC = () => {
   return (
     <div className="h-screen w-full overflow-y-scroll snap-y snap-mandatory no-scrollbar scroll-smooth bg-background">
       {/* Story Bar */}
-      <div className="fixed top-[88px] w-full z-40 bg-background/60 backdrop-blur-xl flex gap-4 px-6 py-3 overflow-x-auto no-scrollbar border-b border-white/5">
+      <div className="fixed top-16 w-full z-40 bg-background/60 backdrop-blur-xl flex gap-4 px-6 py-3 overflow-x-auto no-scrollbar border-b border-white/5">
         {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
           <div key={i} className="flex flex-col items-center gap-1.5 min-w-[64px] shrink-0">
             <div className={cn(

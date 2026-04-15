@@ -62,15 +62,10 @@ const Navbar: React.FC = () => {
 
   return (
     <header className={cn(
-        "fixed top-0 w-full z-50 transition-all duration-500 px-4 md:px-8 py-3",
-        isScrolled ? "pt-4" : "pt-6"
+        "fixed top-0 left-0 w-full z-50 transition-all duration-500 bg-background/80 backdrop-blur-xl border-b",
+        isScrolled ? "bg-zinc-900/95 border-white/10 shadow-lg" : "border-white/5"
     )}>
-        <div className={cn(
-        "max-w-7xl mx-auto flex items-center justify-between transition-all duration-500",
-        "h-16 px-6 relative",
-        "rounded-[2.5rem] border border-white/5 bg-background/20 backdrop-blur-3xl shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]",
-        isScrolled ? "bg-zinc-900/60 border-white/10 ring-1 ring-white/5" : "bg-transparent border-transparent"
-      )}>
+        <div className="max-w-7xl mx-auto flex items-center justify-between h-16 px-4 md:px-6">
         
         {/* Brand Section */}
         <Link to="/" className="flex items-center gap-4 active:scale-95 transition-all group">

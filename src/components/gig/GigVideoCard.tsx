@@ -59,7 +59,7 @@ const GigVideoCard: FC<GigVideoCardProps> = React.memo(({ gig }) => {
       </div>
 
       {/* Floating Info */}
-      <div className="relative z-10 w-full px-6 pb-52 flex justify-between items-end">
+      <div className="relative z-10 w-full px-6 pb-48 flex justify-between items-end">
         <div className="max-w-[75%] space-y-4">
           <div className="flex flex-wrap gap-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container/60 backdrop-blur-md border border-white/10">
@@ -109,7 +109,7 @@ const GigVideoCard: FC<GigVideoCardProps> = React.memo(({ gig }) => {
       </div>
 
       {/* Buy Button */}
-      <div className="absolute bottom-[112px] left-0 w-full px-6 z-40">
+      <div className="absolute bottom-20 left-0 w-full px-6 z-40">
         <Button onClick={handlePurchase} className="w-full h-14 justify-between" size="lg">
           <div className="flex flex-col items-start text-left">
             <span className="text-[10px] font-bold text-white/70 tracking-widest uppercase leading-none">Quick Purchase</span>
