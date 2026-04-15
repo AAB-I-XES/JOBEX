@@ -1,8 +1,9 @@
-import { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Suspense, lazy, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import { useAuth } from './hooks/api/useAuth';
 import AuthGuard from './components/common/AuthGuard';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
@@ -20,14 +21,21 @@ import TransactionHistory from './pages/TransactionHistory';
 
 const App: React.FC = () => {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ErrorBoundary>
+      <Router>
+        <AppContent />
+      </Router>
+    </ErrorBoundary>
   );
 };
 
 const AppContent: React.FC = () => {
   const { isLoading, user } = useAuth();
+  const location = useLocation();
+  
+  useEffect(() => {
+    console.log('[Router] Current Path:', location.pathname);
+  }, [location]);
 
   // Wait for auth rehydration before rendering routes to avoid login flash.
   if (isLoading) {
