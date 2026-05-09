@@ -19,6 +19,7 @@ const CategoryResults = lazy(() => import('./pages/CategoryResults'));
 const SearchResults = lazy(() => import('./pages/SearchResults'));
 const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const GigImmersiveView = lazy(() => import('./pages/GigImmersiveView'));
+const StoryImmersiveView = lazy(() => import('./components/story/StoryImmersiveView'));
 import Settings from './pages/Settings';
 import SavedGigs from './pages/SavedGigs';
 import TransactionHistory from './pages/TransactionHistory';
@@ -72,6 +73,7 @@ const AppContent: React.FC = () => {
           <Route path="search" element={<SearchResults />} />
           <Route path="gig/:id" element={<GigDetails />} />
           <Route path="gig/view/:id" element={<GigImmersiveView />} />
+          <Route path="story/:userId" element={<StoryImmersiveView />} />
           <Route path="profile/:userId" element={<PublicProfile />} />
           
           {/* Protected Routes */}

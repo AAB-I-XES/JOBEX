@@ -8,12 +8,13 @@ import { cn } from '../../utils/helpers';
 const MainLayout: React.FC = () => {
   const location = useLocation();
   const isImmersiveView = location.pathname.includes('/gig/view/');
+  const isStoryView = location.pathname.includes('/story/');
   const isGigDetails = location.pathname.includes('/gig/') && !location.pathname.includes('/view/');
   const isMessageView = location.pathname.startsWith('/messages');
 
-  const hideNavbar = isImmersiveView;
-  const hideBottomNav = isImmersiveView || isGigDetails || isMessageView;
-  const hideFloatingBtn = isImmersiveView || isMessageView;
+  const hideNavbar = isImmersiveView || isStoryView;
+  const hideBottomNav = isImmersiveView || isStoryView || isGigDetails || isMessageView;
+  const hideFloatingBtn = isImmersiveView || isStoryView || isMessageView;
 
   return (
     <div className="relative min-h-screen bg-background text-on-surface font-body selection:bg-primary/30">
