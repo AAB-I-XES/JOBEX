@@ -5,7 +5,7 @@ export const gigService = {
   async getGigs(category?: GigCategory): Promise<Gig[]> {
     let queryWithProfile = supabase
       .from('gigs')
-      .select('*, profiles(full_name, avatar_url, title)')
+      .select('*, profiles!seller_id(full_name, avatar_url, title)')
       .eq('status', 'active');
 
     if (category) {
@@ -35,10 +35,10 @@ export const gigService = {
   async getGigById(id: string): Promise<Gig> {
     const { data, error } = await supabase
       .from('gigs')
-      .select('*, profiles(full_name, avatar_url, title)')
+      .select('*, profiles!seller_id(full_name, avatar_url, title)')
       .eq('id', id)
       .single();
-      
+
     if (error) throw error;
     return (data as unknown) as Gig;
   },
@@ -49,7 +49,7 @@ export const gigService = {
       .insert(gig)
       .select()
       .single();
-      
+
     if (error) throw error;
     return data as Gig;
   },
