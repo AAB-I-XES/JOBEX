@@ -1,90 +1,76 @@
-import { useState } from 'react';
-import type { FC } from 'react';
-import { Search } from 'lucide-react';
-import Input from '../components/ui/Input';
-import GigCard from '../components/gig/GigCard';
-import { useGigStore } from '../store/useGigStore';
-import { GigCategory } from '../types/gig';
-import { useGigs } from '../hooks/api/useGigs';
+import React from 'react';
+import { Search, TrendingUp, Sparkles, Zap, Camera, Music, Palette } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
-const categories = Object.values(GigCategory);
+const categories = [
+  { name: 'Video Edit', icon: Zap, color: 'bg-orange-500' },
+  { name: 'UI Design', icon: Palette, color: 'bg-blue-500' },
+  { name: 'VFX Flow', icon: Sparkles, color: 'bg-purple-500' },
+  { name: 'Photography', icon: Camera, color: 'bg-pink-500' },
+  { name: 'Music Production', icon: Music, color: 'bg-green-500' },
+  { name: 'Marketing', icon: TrendingUp, color: 'bg-cyan-500' },
+];
 
-const Explore: FC = () => {
-  const { filteredGigs, searchQuery, setSearchQuery } = useGigStore();
-  const [activeCategory, setActiveCategory] = useState<GigCategory | 'All'>('All');
-  const { isLoading, error } = useGigs();
-  const visibleGigs = activeCategory === 'All'
-    ? filteredGigs
-    : filteredGigs.filter((gig) => gig.category === activeCategory);
+const Explore: React.FC = () => {
+  const navigate = useNavigate();
 
   return (
-    <div className="pt-24 px-4 max-w-2xl mx-auto min-h-screen pb-32 overflow-y-auto no-scrollbar">
-      {/* Search */}
-      <section className="mb-8 mt-4">
-        <Input 
-          placeholder="Find your next skill..." 
-          icon={<Search size={20} />}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
-      </section>
+    <div className="pt-24 pb-32 px-6 max-w-2xl mx-auto min-h-screen">
+      <h1 className="text-4xl font-extrabold tracking-tight text-white mb-6 animate-ios">Explore</h1>
 
-      {/* Categories */}
-      <section className="mb-10 -mx-4">
-        <div className="flex overflow-x-auto no-scrollbar gap-3 px-4">
-          <button 
-            onClick={() => setActiveCategory('All')}
-            className={`px-6 py-2.5 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all ${
-              activeCategory === 'All' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-surface-container-highest text-on-surface-variant border border-white/5'
-            }`}
-          >
-            ALL SKILLS
-          </button>
+      {/* iOS Search Bar */}
+      <div className="relative mb-10">
+        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-on-surface-variant">
+          <Search size={18} strokeWidth={2.5} />
+        </div>
+        <input 
+          type="text" 
+          placeholder="Skills, creators or projects"
+          className="w-full h-12 bg-surface rounded-2xl pl-12 pr-4 text-sm font-medium border border-white/5 focus:ring-2 focus:ring-primary/20 outline-none ios-transition"
+        />
+      </div>
+
+      <section className="space-y-8 animate-ios" style={{ animationDelay: '0.1s' }}>
+        <h2 className="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40">Categories</h2>
+        <div className="grid grid-cols-2 gap-4">
           {categories.map((cat) => (
             <button 
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-6 py-2.5 rounded-full text-xs font-bold tracking-wider whitespace-nowrap transition-all ${
-                activeCategory === cat ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-surface-container-highest text-on-surface-variant border border-white/5'
-              }`}
+              key={cat.name}
+              onClick={() => navigate(`/explore?cat=${cat.name}`)}
+              className="ios-card p-5 flex flex-col items-start gap-4 active:scale-95 ios-transition group"
             >
-              {cat.toUpperCase()}
+              <div className={`${cat.color} w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg`}>
+                <cat.icon size={20} />
+              </div>
+              <span className="text-sm font-bold tracking-tight group-hover:text-primary transition-colors">{cat.name}</span>
             </button>
           ))}
         </div>
       </section>
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 gap-4">
-        <div className="col-span-1 space-y-4">
-          {visibleGigs.filter((_, idx) => idx % 2 === 0).map(gig => (
-            <GigCard key={gig.id} gig={gig} />
-          ))}
+      <section className="mt-12 space-y-6 animate-ios" style={{ animationDelay: '0.2s' }}>
+        <div className="flex justify-between items-center">
+           <h2 className="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40">Trending Now</h2>
+           <button className="text-primary text-xs font-bold active:opacity-50">See All</button>
         </div>
-        <div className="col-span-1 space-y-4 pt-6">
-          {visibleGigs.filter((_, idx) => idx % 2 !== 0).map(gig => (
-            <GigCard key={gig.id} gig={gig} />
-          ))}
+        <div className="space-y-4">
+           {[1, 2, 3, 4, 5, 6].map(i => (
+             <div key={i} className="flex items-center gap-4 bg-surface/50 p-4 rounded-2xl border border-white/5 active:bg-white/5 ios-transition">
+                <div className="w-16 h-16 rounded-xl bg-zinc-800 animate-pulse overflow-hidden">
+                   <img src={`https://picsum.photos/seed/trend-${i}/100/100`} alt="" className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1">
+                   <p className="text-sm font-bold tracking-tight">CGI Product Visualizer</p>
+                   <p className="text-xs text-on-surface-variant font-medium mt-1">@studio_elite</p>
+                </div>
+                <div className="text-right">
+                   <p className="text-sm font-black italic">₹{1200 * i}</p>
+                   <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-1">Global</p>
+                </div>
+             </div>
+           ))}
         </div>
-      </div>
-
-      {isLoading && (
-        <div className="py-20 text-center text-on-surface-variant">
-          Loading gigs...
-        </div>
-      )}
-
-      {error && (
-        <div className="py-20 text-center text-error">
-          Failed to load gigs. Please refresh.
-        </div>
-      )}
-
-      {!isLoading && !error && visibleGigs.length === 0 && (
-        <div className="py-20 text-center text-on-surface-variant">
-          No matches found for your search.
-        </div>
-      )}
+      </section>
     </div>
   );
 };

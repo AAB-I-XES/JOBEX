@@ -3,39 +3,36 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import BottomNav from './BottomNav';
 import { Toaster } from 'react-hot-toast';
+import { Sparkles } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
   return (
-    <div className="relative min-h-screen bg-background text-on-surface font-body overflow-hidden">
+    <div className="relative min-h-screen bg-background text-on-surface font-body selection:bg-primary/30">
       <Toaster 
-        position="bottom-right"
+        position="top-center"
         toastOptions={{
-          style: {
-            background: '#191a1a',
-            color: '#e7e5e5',
-            border: '1px solid rgba(173, 198, 255, 0.1)',
-          },
+          className: 'ios-glass border border-white/10 rounded-2xl text-white font-semibold text-sm shadow-2xl',
+          duration: 3000,
         }}
       />
-      <Navbar />
-      {/* Top Bloom */}
-      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-2/3 h-32 bg-primary/10 blur-[120px] rounded-full pointer-events-none z-40 opacity-50" />
       
-      <main className="h-screen w-full">
+      <Navbar />
+      
+      {/* Dynamic Background Elements */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full pointer-events-none opacity-40 animate-pulse" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-secondary/20 blur-[120px] rounded-full pointer-events-none opacity-40 animate-pulse" />
+
+      <main className="min-h-screen w-full relative z-10 px-0 sm:px-4">
         <Outlet />
       </main>
+
       <BottomNav />
       
-      {/* AI Assistant Button */}
-      <button className="fixed right-6 bottom-64 z-[60] w-12 h-12 rounded-full bg-surface-container-highest border border-primary/30 flex items-center justify-center shadow-2xl active:scale-90 transition-transform">
-        <div className="absolute inset-0 rounded-full bg-primary/10 animate-pulse"></div>
-        <span className="material-symbols-outlined text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
-          auto_awesome
-        </span>
+      {/* iOS Style Action Button (Replacing AI Assistant logic) */}
+      <button className="fixed right-6 bottom-24 z-[60] w-14 h-14 rounded-full ios-glass border border-white/10 flex items-center justify-center shadow-2xl active:scale-95 transition-all group">
+        <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary/20 to-secondary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <Sparkles size={24} className="text-white group-hover:text-primary transition-colors" />
       </button>
-
-      {/* Atmospheric Grain */}
-      <div className="pointer-events-none fixed inset-0 z-[100] opacity-[0.03] bg-[url('https://lh3.googleusercontent.com/aida-public/AB6AXuBehouzsGF5Wf1El2rIRxYINbHFvoPaKXEm6-WdDjOq6HXM7H5BvSR5OP8S1TXOjMYBs85ZP6O50OnULELOVW9iavQ5t5Qr2U0ReE6jqSaOmew6tg_bJ3OBolTa7JoBsKwJnaqOLE8oskMXU7Jx-ExuOk2ohGXqnPuQKWMy0UsgvNuig8RmF1CB8TFi9ciGU3Mvzd-PhzgZR7Q9ksYOVBR7B1q6xfa9_nW89b8s_JwOi3O-d8Bu3YLcQVahyfHGrjcYwoLLh9MjF1c')]"></div>
     </div>
   );
 };

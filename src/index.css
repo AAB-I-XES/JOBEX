@@ -1,79 +1,47 @@
 @import "tailwindcss";
 
 @theme {
-  --color-tertiary-fixed: #dae6fe;
-  --color-outline: #767575;
-  --color-on-secondary-fixed-variant: #4d5d73;
-  --color-primary-fixed: #d8e2ff;
-  --color-surface-variant: #252626;
-  --color-tertiary: #f0f3ff;
-  --color-on-tertiary-fixed-variant: #535e72;
-  --color-on-error-container: #ff9993;
-  --color-on-secondary-container: #b0c0da;
-  --color-outline-variant: #484848;
-  --color-on-tertiary-container: #495468;
-  --color-tertiary-dim: #ccd7ef;
-  --color-surface-container-high: #1f2020;
-  --color-on-primary-fixed-variant: #0057bd;
-  --color-surface-container-lowest: #000000;
-  --color-secondary: #8f9fb7;
-  --color-on-surface: #e7e5e5;
-  --color-primary-container: #004395;
-  --color-primary-dim: #98b8ff;
-  --color-primary-fixed-dim: #c3d4ff;
-  --color-error-container: #7f2927;
-  --color-inverse-primary: #005bc4;
-  --color-surface-container: #191a1a;
-  --color-on-primary-fixed: #003c86;
-  --color-on-secondary: #102134;
-  --color-surface-container-highest: #252626;
-  --color-on-tertiary-fixed: #374155;
-  --color-on-background: #e7e5e5;
-  --color-on-primary: #003d88;
-  --color-surface-container-low: #131313;
-  --color-inverse-on-surface: #565555;
-  --color-error: #ee7d77;
-  --color-secondary-dim: #8f9fb7;
-  --color-secondary-fixed-dim: #c5d6f0;
-  --color-background: #0e0e0e;
-  --color-surface-bright: #2b2c2c;
-  --color-on-secondary-fixed: #314055;
-  --color-secondary-container: #2d3c51;
-  --color-primary: #adc6ff;
-  --color-tertiary-fixed-dim: #ccd7ef;
-  --color-secondary-fixed: #d3e4fe;
-  --color-on-surface-variant: #acabaa;
-  --color-on-primary-container: #bdd0ff;
-  --color-on-tertiary: #515c70;
-  --color-error-dim: #bb5551;
-  --color-tertiary-container: #dae6fe;
-  --color-surface-tint: #adc6ff;
-  --color-inverse-surface: #fcf9f8;
-  --color-surface-dim: #0e0e0e;
-  --color-surface: #0e0e0e;
-  --color-on-error: #490106;
+  /* iOS Inspired Color Palette */
+  --color-primary: #007AFF; /* iOS Blue */
+  --color-primary-dim: #0056B3;
+  --color-secondary: #5856D6; /* iOS Purple */
+  --color-background: #000000; /* Deep iOS Dark Mode */
+  --color-surface: #1C1C1E; /* iOS System Gray 6 */
+  --color-surface-container: #2C2C2E; /* iOS System Gray 5 */
+  --color-on-surface: #FFFFFF;
+  --color-on-surface-variant: #8E8E93; /* iOS System Gray */
+  --color-error: #FF3B30; /* iOS Red */
+  --color-success: #34C759; /* iOS Green */
+  --color-warning: #FF9500; /* iOS Orange */
 
-  --font-headline: "Inter", sans-serif;
-  --font-body: "Inter", sans-serif;
-  --font-label: "Inter", sans-serif;
+  --font-headline: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
 
-  --radius-DEFAULT: 0.25rem;
-  --radius-lg: 0.5rem;
-  --radius-xl: 0.75rem;
+  --radius-ios-card: 12px;
+  --radius-ios-button: 10px;
 }
 
 @layer base {
   body {
     @apply bg-background text-on-surface font-body;
     min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    letter-spacing: -0.011em;
   }
 }
 
 @layer components {
-  .glass-panel {
-    background: rgba(43, 44, 44, 0.6);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+  .ios-glass {
+    @apply bg-zinc-900/70 backdrop-blur-2xl;
+    -webkit-backdrop-filter: blur(25px);
+  }
+
+  .ios-card {
+    @apply bg-surface border border-white/5 rounded-[20px] shadow-sm;
+  }
+
+  .ios-list-item {
+    @apply flex items-center justify-between py-3 border-b border-white/5 last:border-0 active:bg-white/5 transition-colors;
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -85,68 +53,22 @@
     scrollbar-width: none;
   }
 
-  .primary-glow-button {
-    background: linear-gradient(135deg, #adc6ff 0%, #004395 100%);
-    box-shadow: 0 0 20px rgba(173, 198, 255, 0.3);
-  }
-
-  .gig-pulse-dot {
-    position: relative;
-  }
-
-  .gig-pulse-dot::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border-radius: 9999px;
-    background: #adc6ff;
-    opacity: 0.3;
-    filter: blur(4px);
-  }
-
-  .share-glow {
-    box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
-  }
-
-  .ai-assistant-glow {
-    box-shadow: 0 0 15px rgba(173, 198, 255, 0.4);
-  }
-
-  .ghost-border {
-    border: 1px solid rgba(72, 72, 72, 0.15);
-  }
-
-  .material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-    display: inline-block;
-    vertical-align: middle;
+  .ios-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
 
-@keyframes gig-pulse-animation {
-  0%, 100% { box-shadow: 0 0 10px 2px rgba(173, 198, 255, 0.3); }
-  50% { box-shadow: 0 0 20px 4px rgba(173, 198, 255, 0.5); }
+/* iOS-like Bounce Scroll Simulation for Web (Only UI feel) */
+.ios-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
 }
 
-.gig-pulse {
-  animation: gig-pulse-animation 2s infinite ease-in-out;
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes heart-beat {
-  0% { transform: scale(0); opacity: 0; }
-  50% { transform: scale(1.2); opacity: 0.8; }
-  100% { transform: scale(1); opacity: 0; }
-}
-
-.like-animation {
-  animation: heart-beat 0.8s ease-out forwards;
-}
-
-.grain-overlay {
-  pointer-events: none;
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  opacity: 0.03;
-  background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBehouzsGF5Wf1El2rIRxYINbHFvoPaKXEm6-WdDjOq6HXM7H5BvSR5OP8S1TXOjMYBs85ZP6O50OnULELOVW9iavQ5t5Qr2U0ReE6jqSaOmew6tg_bJ3OBolTa7JoBsKwJnaqOLE8oskMXU7Jx-ExuOk2ohGXqnPuQKWMy0UsgvNuig8RmF1CB8TFi9ciGU3Mvzd-PhzgZR7Q9ksYOVBR7B1q6xfa9_nW89b8s_JwOi3O-d8Bu3YLcQVahyfHGrjcYwoLLh9MjF1c');
+.animate-ios {
+  animation: fade-in-up 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
 }

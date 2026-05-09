@@ -1,50 +1,64 @@
 import React from 'react';
 import { Star, CheckCircle } from 'lucide-react';
 import type { Gig } from '../../types/gig';
-import { cn } from '../ui/Button';
+import { cn } from '../../utils/helpers';
 
 interface GigCardProps {
   gig: Gig;
-  variant?: 'grid' | 'detailed';
   className?: string;
 }
 
 const GigCard: React.FC<GigCardProps> = ({ gig, className }) => {
   return (
     <div className={cn(
-      "group relative bg-surface-container-low rounded-2xl overflow-hidden border border-white/5 transition-all duration-300 hover:border-primary/30",
+      "group ios-card relative overflow-hidden ios-transition active:scale-[0.98] cursor-pointer",
       className
     )}>
-      <div className="aspect-square relative overflow-hidden">
+      {/* Media Content */}
+      <div className="aspect-[4/5] relative overflow-hidden bg-zinc-900">
         <img 
           src={gig.thumbnail_url} 
           alt={gig.title} 
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
+          className="w-full h-full object-cover ios-transition group-hover:scale-105" 
         />
-        <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-          <span className="px-2 py-1 bg-surface-container-lowest/60 backdrop-blur-md rounded-md text-[10px] font-bold text-primary tracking-widest uppercase">
-            {gig.category}
-          </span>
+        
+        {/* Transparent Badge Overlay */}
+        <div className="absolute top-3 left-3">
+          <div className="ios-glass px-2.5 py-1 rounded-full border border-white/10 shadow-lg">
+            <span className="text-[9px] font-black text-white uppercase tracking-wider">
+              {gig.category}
+            </span>
+          </div>
+        </div>
+
+        {/* Price Tag Overlay */}
+        <div className="absolute bottom-3 right-3">
+           <div className="bg-primary px-3 py-1 rounded-full shadow-lg shadow-primary/20">
+              <span className="text-sm font-black text-white tracking-tighter italic">₹{gig.price}</span>
+           </div>
         </div>
       </div>
       
-      <div className="p-4 bg-gradient-to-t from-surface-container-low to-transparent">
-        <h3 className="text-sm font-semibold text-on-surface leading-tight mb-1 line-clamp-2">
+      {/* Information Overlay */}
+      <div className="p-4 space-y-2">
+        <div className="flex items-center gap-1.5">
+           <div className="w-5 h-5 rounded-full overflow-hidden border border-white/10">
+              <img src={`https://picsum.photos/seed/${gig.id}/50/50`} className="w-full h-full object-cover" alt="" />
+           </div>
+           <span className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest truncate">Elite Creator</span>
+           {gig.is_verified && <CheckCircle size={10} className="text-primary fill-primary/10" />}
+        </div>
+
+        <h3 className="text-sm font-bold text-white leading-tight line-clamp-2 min-h-[2.5rem]">
           {gig.title}
         </h3>
         
-        <div className="flex items-center gap-1 mb-2">
-          <Star size={14} className="text-yellow-500 fill-yellow-500" />
-          <span className="text-[11px] font-bold text-on-surface">{gig.rating}</span>
-          <span className="text-[11px] text-on-surface-variant">({gig.review_count})</span>
-        </div>
-        
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-1 opacity-60">
           <div className="flex items-center gap-1">
-            <span className="text-xs text-on-surface-variant truncate max-w-[80px]">@creator</span>
-            {gig.is_verified && <CheckCircle size={14} className="text-blue-400 fill-blue-400" />}
+            <Star size={12} className="text-yellow-500 fill-yellow-500" />
+            <span className="text-[11px] font-black text-white">{gig.rating}</span>
           </div>
-          <span className="text-sm font-bold text-primary">₹{gig.price}</span>
+          <span className="text-[10px] font-bold uppercase tracking-widest">{gig.delivery_time}</span>
         </div>
       </div>
     </div>

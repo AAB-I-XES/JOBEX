@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { DollarSign, TrendingUp, Download, Settings, ArrowRight, CreditCard, PieChart, Activity } from 'lucide-react';
+import { DollarSign, TrendingUp, Download, Settings, ArrowRight, CreditCard, PieChart, Activity, ChevronRight, BarChart3, Clock } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { formatPrice } from '../utils/helpers';
 import { useUserStore } from '../store/useUserStore';
@@ -13,216 +13,124 @@ const Dashboard: React.FC = () => {
   const [activeSegment, setActiveSegment] = useState<'overview' | 'finance'>('overview');
 
   const handleWithdrawal = () => {
-    toast.error("Withdrawal feature coming soon. Link your bank account in Settings.");
+    toast.error("Withdrawal feature coming soon.");
   };
 
   return (
-    <div className="pt-24 px-6 max-w-5xl mx-auto min-h-screen pb-24 overflow-y-auto no-scrollbar scroll-smooth">
-      {/* Editorial Header */}
-      <section className="mb-12">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-          <div>
-            <h1 className="text-[4rem] font-black tracking-tighter leading-none mb-4 bg-gradient-to-br from-white via-zinc-400 to-zinc-600 bg-clip-text text-transparent">
-              Command <br /> Center
-            </h1>
-            <p className="text-on-surface-variant font-bold text-sm tracking-wide uppercase opacity-60">
-              Welcome back, {user?.full_name?.split(' ')[0] || 'Creator'}. You have 3 pending reviews.
-            </p>
-          </div>
-          <div className="flex gap-3">
-             <Button 
-                onClick={() => setActiveSegment('overview')}
-                variant={activeSegment === 'overview' ? 'primary' : 'outline'}
-                className="rounded-full px-6 h-12 text-[10px] font-black tracking-widest"
-             >
-                <Activity size={16} className="mr-2" /> OVERVIEW
-             </Button>
-             <Button 
-                onClick={() => setActiveSegment('finance')}
-                variant={activeSegment === 'finance' ? 'primary' : 'outline'}
-                className="rounded-full px-6 h-12 text-[10px] font-black tracking-widest"
-             >
-                <PieChart size={16} className="mr-2" /> REVENUE
-             </Button>
-          </div>
-        </div>
-      </section>
+    <div className="pt-24 px-6 max-w-4xl mx-auto min-h-screen pb-40 ios-scroll">
+      <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2 animate-ios">Dashboard</h1>
+      <p className="text-on-surface-variant font-medium text-sm mb-10 opacity-60 uppercase tracking-widest animate-ios">Command Center</p>
 
-      {/* Primary Grid */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-        {/* Wallet Card */}
-        <div className="bg-zinc-900 border border-white/5 p-8 rounded-[3rem] flex flex-col justify-between min-h-[260px] shadow-2xl relative overflow-hidden group col-span-1 md:col-span-2 lg:col-span-1">
-          <div className="absolute -right-20 -top-20 w-64 h-64 bg-primary/5 rounded-full blur-[80px]" />
-          <div className="relative z-10 flex justify-between items-start mb-4">
-            <span className="text-primary font-black text-[10px] uppercase tracking-[0.3em]">Revenue Balance</span>
-            <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-               <DollarSign size={20} />
-            </div>
+      {/* Revenue Card (Primary Focus) */}
+      <section className="animate-ios" style={{ animationDelay: '0.1s' }}>
+        <div className="bg-primary p-8 rounded-[32px] flex flex-col justify-between min-h-[220px] shadow-2xl relative overflow-hidden group mb-8">
+          <div className="absolute -right-10 -top-10 w-48 h-48 bg-white/10 rounded-full blur-3xl" />
+          <div className="relative z-10 flex justify-between items-start">
+            <span className="text-white/60 font-black text-[10px] uppercase tracking-[0.3em]">Total Balance</span>
+            <button className="ios-glass p-2.5 rounded-full text-white border-white/20">
+              <BarChart3 size={20} />
+            </button>
           </div>
           <div className="relative z-10">
-            <span className="text-6xl font-black tracking-tighter text-white">{formatPrice(4820)}</span>
-            <div className="flex gap-8 mt-8">
-              <StatMini label="ESCROWED" value={formatPrice(1240)} />
-              <div className="w-px h-10 bg-white/5" />
-              <StatMini label="AVAILABLE" value={formatPrice(3580)} />
-            </div>
-          </div>
-          <Button onClick={handleWithdrawal} className="mt-8 rounded-2xl font-black text-xs gap-2 py-8 bg-white text-black hover:bg-zinc-200">
-            <CreditCard size={18} /> INITIATE WITHDRAWAL
-          </Button>
-        </div>
-
-        {/* Live Tracking */}
-        <div className="bg-surface-container-low p-8 rounded-[3rem] border border-white/5 flex flex-col justify-between">
-          <div className="flex justify-between items-center mb-8">
-            <span className="text-on-surface-variant text-[10px] uppercase tracking-[0.2em] font-black">Active Pipeline</span>
-            <div className="flex items-center gap-1.5 bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">
-               <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-               <span className="text-[9px] font-black text-green-500 uppercase tracking-widest">Live</span>
-            </div>
-          </div>
-          <div className="space-y-8">
-            <ProjectProgress label="Visual Identity Build" progress={85} />
-            <ProjectProgress label="Ad-Campaign Editing" progress={32} />
-            <ProjectProgress label="Motion Graphics" progress={100} />
-          </div>
-          <Button variant="ghost" size="sm" className="mt-8 text-primary font-black text-[10px] uppercase tracking-widest gap-2">
-            OPEN MANAGEMENT PANEL <ArrowRight size={14} />
-          </Button>
-        </div>
-
-        {/* Pulse Chart */}
-        <div className="bg-surface-container-low p-8 rounded-[3rem] border border-white/5 flex flex-col justify-between">
-          <div className="flex justify-between items-center mb-6">
-            <span className="text-on-surface-variant text-[10px] uppercase tracking-[0.2em] font-black">Weekly Pulse</span>
-            <span className="text-xs font-black text-primary">+14.2%</span>
-          </div>
-          <div className="h-28 flex items-end gap-1.5">
-             {[30, 45, 35, 80, 50, 70, 40].map((h, i) => (
-               <div key={i} className="flex-1 group relative">
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-white text-black text-[8px] font-black px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                     ₹{h * 10}
-                  </div>
-                  <div 
-                    className={cn(
-                        "w-full rounded-t-xl transition-all duration-500",
-                        i === 3 ? "bg-primary" : "bg-white/5 group-hover:bg-white/10"
-                    )} 
-                    style={{ height: `${h}%` }} 
-                  />
-               </div>
-             ))}
-          </div>
-          <div className="flex justify-between items-end mt-8 pt-6 border-t border-white/5">
-            <div>
-              <p className="text-[10px] uppercase font-black text-on-surface-variant tracking-widest mb-1 opacity-40">Avg. Day</p>
-              <p className="text-2xl font-black text-on-surface tracking-tighter">₹9,420</p>
-            </div>
-            <div className="w-12 h-12 rounded-2xl bg-surface-container-highest flex items-center justify-center text-primary shadow-xl">
-              <TrendingUp size={24} />
+            <h2 className="text-6xl font-extrabold tracking-tighter text-white mb-2">{formatPrice(4820)}</h2>
+            <div className="flex gap-4">
+              <StatPill label="Escrow" value={formatPrice(1240)} />
+              <StatPill label="Ready" value={formatPrice(3580)} />
             </div>
           </div>
         </div>
       </section>
 
-      {/* Secondary Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-20">
-        <section className="lg:col-span-2 space-y-6">
-          <div className="flex items-center justify-between">
-            <h3 className="text-2xl font-black tracking-tight">Recent Activity</h3>
-            <Button onClick={() => navigate('/history')} variant="ghost" className="text-[10px] font-black tracking-widest uppercase text-on-surface-variant">History Archive</Button>
-          </div>
-          <div className="space-y-4">
-            <TransactionItem label="Visual effects payment" amount={1200} date="2 mins ago" type="deposit" />
-            <TransactionItem label="Server infrastructure fee" amount={45} date="Today, 2:40 PM" type="withdrawal" />
-            <TransactionItem label="UI Kit Licensing" amount={840} date="Yesterday" type="deposit" />
-          </div>
-        </section>
+      {/* Control Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 animate-ios" style={{ animationDelay: '0.2s' }}>
+        <div className="ios-card p-6 flex flex-col justify-between">
+           <div className="flex justify-between items-center mb-6">
+              <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-60">Operations</span>
+              <TrendingUp size={18} className="text-primary" />
+           </div>
+           <div className="space-y-4">
+              <ProjectRow label="Brand Identity" status="In Design" color="text-primary" progress={75} />
+              <ProjectRow label="API Integration" status="Testing" color="text-warning" progress={40} />
+              <ProjectRow label="Video FX" status="Rendered" color="text-success" progress={100} />
+           </div>
+           <Button variant="ghost" className="w-full mt-6 h-12 rounded-2xl flex items-center justify-between px-4 border border-white/5 font-bold text-xs bg-white/5">
+              Project Board <ChevronRight size={14} />
+           </Button>
+        </div>
 
-        <section className="space-y-6">
-          <div className="bg-surface-container-low p-8 rounded-[2.5rem] border border-white/5 space-y-8">
-             <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-zinc-800 flex items-center justify-center font-black text-xl border border-white/10">
-                   AV
-                </div>
-                <div>
-                   <h4 className="font-extrabold text-base tracking-tight">{user?.full_name || 'Alex Rivera'}</h4>
-                   <p className="text-[9px] text-primary uppercase font-black tracking-[0.2em]">Verified Seller</p>
-                </div>
-             </div>
-             <div className="space-y-6">
-                <MetricBar label="Consistency Rate" value="98%" />
-                <MetricBar label="SLA Compliance" value="100%" />
-             </div>
-          </div>
-          <Button onClick={() => navigate('/settings')} variant="outline" className="w-full h-20 rounded-[2rem] text-[11px] font-black tracking-[0.2em] gap-3 bg-white/5 border-white/10 hover:bg-white/10 uppercase">
-            <Settings size={20} /> Configure Workplace
-          </Button>
-        </section>
+        <div className="ios-card p-6 flex flex-col justify-between">
+           <div className="flex justify-between items-center mb-6">
+              <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant opacity-60">Quick Actions</span>
+              <Activity size={18} className="text-secondary" />
+           </div>
+           <div className="grid grid-cols-2 gap-3">
+              <ActionButton onClick={() => navigate('/upload')} icon={Plus} label="New Gig" color="bg-secondary" />
+              <ActionButton onClick={handleWithdrawal} icon={CreditCard} label="Bank" color="bg-success" />
+              <ActionButton onClick={() => navigate('/history')} icon={Clock} label="History" color="bg-surface-container" />
+              <ActionButton onClick={() => navigate('/settings')} icon={Settings} label="Tools" color="bg-zinc-800" />
+           </div>
+        </div>
       </div>
+
+      <section className="mt-12 animate-ios" style={{ animationDelay: '0.3s' }}>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40">Recent History</h2>
+          <button onClick={() => navigate('/history')} className="text-primary text-xs font-bold active:opacity-50">View All</button>
+        </div>
+        <div className="ios-card divide-y divide-white/5 overflow-hidden">
+           <HistoryRow label="Logo Pack Delivery" amount="+ ₹1,200" date="2h ago" type="plus" />
+           <HistoryRow label="Platform Fee" amount="- ₹80" date="Yesterday" type="minus" />
+           <HistoryRow label="Reel Sync Payout" amount="+ ₹4,500" date="Oct 20" type="plus" />
+        </div>
+      </section>
     </div>
   );
 };
 
-const StatMini: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div>
-    <p className="text-[9px] uppercase font-black text-white/40 tracking-[0.2em] leading-none mb-1.5">{label}</p>
-    <p className="text-xl font-black text-white tracking-tighter">{value}</p>
+const Plus: React.FC<{ size: number }> = ({ size }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+);
+
+const StatPill: React.FC<{ label: string; value: string }> = ({ label, value }) => (
+  <div className="bg-white/10 px-3 py-1.5 rounded-xl border border-white/5">
+    <p className="text-[8px] font-black text-white/40 uppercase tracking-widest leading-none mb-1">{label}</p>
+    <p className="text-xs font-black text-white">{value}</p>
   </div>
 );
 
-const ProjectProgress: React.FC<{ label: string; progress: number }> = ({ label, progress }) => (
-  <div className="space-y-3">
-    <div className="flex justify-between text-[10px] font-black uppercase tracking-widest leading-none">
-      <span className="text-on-surface">{label}</span>
-      <span className={cn(progress === 100 ? "text-primary" : "text-on-surface-variant")}>
-        {progress === 100 ? 'COMPLETED' : `${progress}%`}
-      </span>
+const ProjectRow: React.FC<{ label: string; status: string; color: string; progress: number }> = ({ label, status, color, progress }) => (
+  <div className="space-y-2">
+    <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest">
+      <span className="text-white">{label}</span>
+      <span className={color}>{status}</span>
     </div>
     <div className="w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
-      <div 
-        className={cn(
-            "h-full transition-all duration-1000",
-            progress === 100 ? "bg-primary shadow-[0_0_10px_rgba(var(--primary-rgb),0.5)]" : "bg-primary/40 text-primary blur-[1px]"
-        )} 
-        style={{ width: `${progress}%` }} 
-      />
+      <div className={cn("h-full transition-all duration-1000", progress === 100 ? "bg-success" : "bg-primary")} style={{ width: `${progress}%` }} />
     </div>
   </div>
 );
 
-const TransactionItem: React.FC<{ label: string; amount: number; date: string; type: 'deposit' | 'withdrawal' }> = ({ label, amount, date, type }) => (
-  <div className="bg-surface-container-lowest p-5 rounded-3xl flex items-center justify-between border border-white/5 hover:border-primary/30 transition-all cursor-pointer group">
-    <div className="flex items-center gap-5">
-      <div className={cn(
-        "w-14 h-14 rounded-2xl flex items-center justify-center transition-all",
-        type === 'deposit' ? "bg-green-500/10 text-green-500" : "bg-error/10 text-error"
-      )}>
-        {type === 'deposit' ? <TrendingUp size={24} /> : <Download size={24} />}
-      </div>
-      <div>
-        <p className="font-black text-base tracking-tighter leading-none mb-1 group-hover:text-primary transition-colors">{label}</p>
-        <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest opacity-50">{date}</p>
-      </div>
-    </div>
-    <div className="text-right">
-      <p className={cn("font-black text-lg tracking-tighter", type === 'deposit' ? "text-green-500" : "text-on-surface")}>
-        {type === 'deposit' ? '+' : '-'}{formatPrice(amount)}
-      </p>
-      <p className="text-[8px] uppercase font-black text-on-surface-variant tracking-[0.2em] opacity-40">Processed</p>
-    </div>
-  </div>
+const ActionButton: React.FC<{ icon: any; label: string; color: string; onClick: () => void }> = ({ icon: Icon, label, color, onClick }) => (
+  <button onClick={onClick} className="flex flex-col items-center justify-center gap-2 p-4 rounded-3xl bg-surface-container border border-white/5 active:scale-95 transition-all group">
+     <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center text-white shadow-sm ios-transition group-hover:scale-110", color)}>
+        <Icon size={20} />
+     </div>
+     <span className="text-[10px] font-bold tracking-tight text-on-surface-variant group-hover:text-white">{label}</span>
+  </button>
 );
 
-const MetricBar: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="space-y-2">
-    <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-[0.2em]">
-      <span className="text-on-surface-variant opacity-60">{label}</span>
-      <span className="text-primary">{value}</span>
+const HistoryRow: React.FC<{ label: string; amount: string; date: string; type: 'plus' | 'minus' }> = ({ label, amount, date, type }) => (
+  <div className="flex items-center justify-between p-4 px-6 active:bg-white/5 transition-colors cursor-pointer group">
+    <div className="flex items-center gap-4">
+       <div className={cn("w-10 h-10 rounded-2xl flex items-center justify-center", type === 'plus' ? "bg-success/10 text-success" : "bg-error/10 text-error")}>
+          {type === 'plus' ? <TrendingUp size={20} /> : <Download size={20} />}
+       </div>
+       <div>
+          <p className="text-sm font-bold text-white group-hover:text-primary transition-colors">{label}</p>
+          <p className="text-[10px] text-on-surface-variant font-medium mt-0.5">{date}</p>
+       </div>
     </div>
-    <div className="w-full bg-white/5 h-1 rounded-full overflow-hidden">
-      <div className="bg-primary h-full shadow-[0_0_8px_rgba(var(--primary-rgb),0.4)]" style={{ width: value }} />
-    </div>
+    <p className={cn("font-black tracking-tighter text-sm", type === 'plus' ? "text-success" : "text-white")}>{amount}</p>
   </div>
 );
 
