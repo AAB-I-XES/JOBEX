@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
   return (
     <header className={cn(
       "fixed top-0 left-0 w-full z-[100] transition-all duration-300",
-      isScrolled ? "ios-glass border-b border-white/10 h-14" : "h-16 bg-transparent"
+      isScrolled ? "ios-glass border-b border-white/10 h-14" : "h-16 bg-background border-b border-white/5"
     )}>
       <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-6">
         
