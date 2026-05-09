@@ -7,7 +7,7 @@ const Home: React.FC = () => {
     <div className="min-h-screen bg-background text-on-surface">
       {/* Large iOS Header (Collapses on scroll handled by Navbar/HomeFeed) */}
       {/* Story Section */}
-      <div className="pt-20">
+      <div>
          <StoryBar />
       </div>
 
