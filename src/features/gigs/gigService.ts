@@ -35,7 +35,7 @@ export const gigService = {
   async getGigById(id: string): Promise<Gig> {
     const { data, error } = await supabase
       .from('gigs')
-      .select('*, profiles(*)')
+      .select('*, profiles(full_name, avatar_url, title)')
       .eq('id', id)
       .single();
       

@@ -32,7 +32,10 @@ const GigImmersiveView: React.FC = () => {
     if (id) {
       gigService.getGigById(id)
         .then(setGig)
-        .catch(() => toast.error("Failed to load immersive view"))
+        .catch((err) => {
+          console.error('[ImmersiveView] Fetch error:', err);
+          toast.error("Failed to load immersive view");
+        })
         .finally(() => setIsLoading(false));
     }
   }, [id]);
