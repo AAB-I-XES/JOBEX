@@ -3,7 +3,7 @@ import Navbar from './Navbar';
 import BottomNav from './BottomNav';
 import { Toaster } from 'react-hot-toast';
 import { Sparkles } from 'lucide-react';
-import { cn } from '../utils/helpers';
+import { cn } from '../../utils/helpers';
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
