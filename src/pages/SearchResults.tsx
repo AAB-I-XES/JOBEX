@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useGigStore } from '../store/useGigStore';
+
 import { authService } from '../features/auth/authService';
 import { gigService } from '../features/gigs/gigService';
 import type { Gig } from '../types/gig';
 import type { User } from '../types/user';
 import GigCard from '../components/gig/GigCard';
-import { Search, ChevronLeft, User as UserIcon, Briefcase, LayoutGrid, MessageCircle } from 'lucide-react';
+import { Search, ChevronLeft, User as UserIcon, Briefcase, MessageCircle } from 'lucide-react';
 import { cn } from '../utils/helpers';
 
 const SearchResults: React.FC = () => {

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { chatService } from '../features/chat/chatService';
 import { useUserStore } from '../store/useUserStore';
 import type { Message, Conversation } from '../types/chat';
-import { Send, Phone, Video, Info, CheckCheck, MessageCircle, ArrowLeft, MoreHorizontal, Paperclip } from 'lucide-react';
+import { Send, Phone, Video, CheckCheck, MessageCircle, ArrowLeft, MoreHorizontal, Paperclip } from 'lucide-react';
 import { cn } from '../utils/helpers';
 import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabaseClient';

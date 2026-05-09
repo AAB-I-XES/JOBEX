@@ -8,7 +8,7 @@ import type { User } from '../types/user';
 import type { Gig } from '../types/gig';
 import GigCard from '../components/gig/GigCard';
 import Button from '../components/ui/Button';
-import { ChevronLeft, MessageCircle, Share2, Star, ShieldCheck, Globe, MapPin } from 'lucide-react';
+import { ChevronLeft, MessageCircle, Share2, ShieldCheck, Globe } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 const PublicProfile: React.FC = () => {
