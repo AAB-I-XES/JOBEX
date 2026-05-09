@@ -1,9 +1,9 @@
 import React from 'react';
-import { Shield, Bell, Lock, CreditCard, ChevronRight, Share2, Eye, ShieldCheck, HelpCircle, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Bell, Lock, CreditCard, ChevronRight, Eye, ShieldCheck, HelpCircle } from 'lucide-react';
+
 
 const Settings: React.FC = () => {
-  const navigate = useNavigate();
+
 
   const sections = [
     {

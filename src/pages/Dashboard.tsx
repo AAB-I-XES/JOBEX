@@ -1,16 +1,15 @@
-import React, { useState } from 'react';
-import { DollarSign, TrendingUp, Download, Settings, ArrowRight, CreditCard, PieChart, Activity, ChevronRight, BarChart3, Clock } from 'lucide-react';
+import React from 'react';
+import { TrendingUp, Download, Settings, CreditCard, Activity, ChevronRight, BarChart3, Clock } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { formatPrice } from '../utils/helpers';
-import { useUserStore } from '../store/useUserStore';
+
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '../utils/helpers';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useUserStore();
-  const [activeSegment, setActiveSegment] = useState<'overview' | 'finance'>('overview');
+
 
   const handleWithdrawal = () => {
     toast.error("Withdrawal feature coming soon.");

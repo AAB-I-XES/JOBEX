@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Bell, Menu, User, Settings, LogOut } from 'lucide-react';
+import { Search, User, Settings, LogOut } from 'lucide-react';
 import { useUserStore } from '../../store/useUserStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/helpers';

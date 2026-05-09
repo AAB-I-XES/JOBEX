@@ -166,11 +166,6 @@ const GuestProfileCard: React.FC = () => {
   );
 };
 
-const Stat: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="flex flex-col gap-0.5">
-    <p className="font-extrabold text-xl tracking-tighter text-white">{value}</p>
-    <p className="text-[9px] uppercase tracking-widest text-on-surface-variant font-black opacity-60">{label}</p>
-  </div>
-);
+
 
 export default Profile;
