@@ -36,7 +36,7 @@ const Explore: React.FC = () => {
           {categories.map((cat) => (
             <button 
               key={cat.name}
-              onClick={() => navigate(`/explore?cat=${cat.name}`)}
+              onClick={() => navigate(`/explore/${encodeURIComponent(cat.name)}`)}
               className="ios-card p-5 flex flex-col items-start gap-4 active:scale-95 ios-transition group"
             >
               <div className={`${cat.color} w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg`}>

@@ -15,6 +15,7 @@ const GigDetails = lazy(() => import('./pages/GigDetails'));
 const PostGig = lazy(() => import('./pages/PostGig'));
 const Login = lazy(() => import('./pages/Login'));
 const Notifications = lazy(() => import('./pages/Notifications'));
+const CategoryResults = lazy(() => import('./pages/CategoryResults'));
 import Settings from './pages/Settings';
 import SavedGigs from './pages/SavedGigs';
 import TransactionHistory from './pages/TransactionHistory';
@@ -64,6 +65,7 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="explore" element={<Explore />} />
+          <Route path="explore/:categoryName" element={<CategoryResults />} />
           <Route path="gig/:id" element={<GigDetails />} />
           
           {/* Protected Routes */}
