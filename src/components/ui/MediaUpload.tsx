@@ -128,20 +128,23 @@ const MediaUpload: React.FC<MediaUploadProps> = ({ onUploadSuccess }) => {
       </div>
 
       {file && (
-        <Button 
-          onClick={handleUpload} 
-          isLoading={isUploading}
-          className="w-full h-16 rounded-2xl gap-3 text-lg font-black"
-        >
-          {isUploading ? (
-            <>UPLOADING...</>
-          ) : (
-            <>
-              UPLOAD NOW
-              <Rocket size={20} />
-            </>
-          )}
-        </Button>
+        <div className="space-y-3">
+          <p className="text-[9px] font-black uppercase text-primary tracking-widest text-center animate-pulse">Ready to process? Click below</p>
+          <Button 
+            onClick={handleUpload} 
+            isLoading={isUploading}
+            className="w-full h-16 rounded-2xl gap-3 text-lg font-black"
+          >
+            {isUploading ? (
+              <>UPLOADING...</>
+            ) : (
+              <>
+                CONFIRM UPLOAD
+                <Rocket size={20} />
+              </>
+            )}
+          </Button>
+        </div>
       )}
 
       <div className="px-4 py-3 bg-error/5 rounded-2xl border border-error/10 flex gap-3 items-center">

@@ -9,6 +9,7 @@ import { GigCategory, GigStatus } from '../types/gig';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useUserStore } from '../store/useUserStore';
+import { cn } from '../utils/helpers';
 
 const categories = Object.values(GigCategory);
 
@@ -90,14 +91,22 @@ const PostGig: FC = () => {
           </div>
 
           <div className="space-y-6">
-             <Input 
-                name="title"
-                label="Gig Title" 
-                placeholder="I will edit your high-retention reels..." 
-                value={formData.title}
-                onChange={handleInputChange}
-                icon={<Sparkles size={18} className="text-primary" />}
-             />
+             <div className="space-y-2">
+               <Input 
+                  name="title"
+                  label="Gig Title" 
+                  placeholder="I will edit your high-retention reels..." 
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  icon={<Sparkles size={18} className="text-primary" />}
+               />
+               <p className={cn(
+                 "text-[9px] font-bold uppercase tracking-widest px-2",
+                 formData.title.length > 5 ? "text-green-500" : "text-on-surface-variant opacity-40"
+               )}>
+                 {formData.title.length > 5 ? "✓ Title looks good" : "Min. 6 characters required"}
+               </p>
+             </div>
              
              <div className="space-y-2">
                 <label className="text-[10px] uppercase font-bold text-on-surface-variant tracking-widest px-1">Detailed Service Scope</label>
@@ -108,6 +117,12 @@ const PostGig: FC = () => {
                   value={formData.description}
                   onChange={handleInputChange}
                 />
+                <p className={cn(
+                  "text-[9px] font-bold uppercase tracking-widest px-2",
+                  formData.description.length > 20 ? "text-green-500" : "text-on-surface-variant opacity-40"
+                )}>
+                  {formData.description.length > 20 ? "✓ Description is detailed enough" : "Min. 21 characters required"}
+                </p>
              </div>
 
              <div className="grid grid-cols-2 gap-6">
@@ -171,14 +186,26 @@ const PostGig: FC = () => {
                     <span className="text-[10px] uppercase font-black tracking-widest text-on-surface-variant">Estimated Earnings (95%)</span>
                     <span className="text-2xl font-black text-primary">₹{(formData.price * 0.95).toFixed(2)}</span>
                  </div>
-                 <Button 
-                    isLoading={isSubmitting} 
-                    disabled={!isFormValid}
-                    onClick={handleSubmit} 
-                    className="w-full py-8 text-lg gap-3"
-                 >
-                    Launch Gig <Rocket size={20} />
-                 </Button>
+                 <div className="space-y-4">
+                    {!isFormValid && (
+                       <div className="p-4 rounded-2xl bg-error/5 border border-error/10 space-y-2">
+                          <p className="text-[9px] font-black uppercase tracking-widest text-error/60">Pending Requirements:</p>
+                          <ul className="space-y-1">
+                             {formData.title.length <= 5 && <li className="text-[10px] font-bold text-on-surface-variant flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-error" /> Longer title</li>}
+                             {formData.description.length <= 20 && <li className="text-[10px] font-bold text-on-surface-variant flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-error" /> Longer description</li>}
+                             {!uploadedMediaUrl && <li className="text-[10px] font-bold text-on-surface-variant flex items-center gap-2"><div className="w-1 h-1 rounded-full bg-error" /> Upload & Click 'Upload Now'</li>}
+                          </ul>
+                       </div>
+                    )}
+                    <Button 
+                       isLoading={isSubmitting} 
+                       disabled={!isFormValid}
+                       onClick={handleSubmit} 
+                       className="w-full py-8 text-lg gap-3"
+                    >
+                       Launch Gig <Rocket size={20} />
+                    </Button>
+                 </div>
               </div>
            </div>
         </div>
