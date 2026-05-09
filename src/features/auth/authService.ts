@@ -97,4 +97,24 @@ export const authService = {
 
     return data as User;
   },
+
+  async getUserById(id: string): Promise<User | null> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', id)
+      .single();
+    if (error) return null;
+    return data as User;
+  },
+
+  async searchUsers(query: string): Promise<User[]> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .or(`full_name.ilike.%${query}%,title.ilike.%${query}%`)
+      .limit(20);
+    if (error) return [];
+    return data as User[];
+  },
 };

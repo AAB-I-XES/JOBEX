@@ -15,7 +15,14 @@ const Messages: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -73,7 +80,9 @@ const Messages: React.FC = () => {
       {/* Sidebar */}
       <aside className={cn(
         "bg-surface-container-low border-r border-white/5 flex-col transition-all duration-300 z-30",
-        sidebarOpen ? "flex w-full md:w-96" : "hidden md:flex w-96"
+        isMobile 
+          ? (sidebarOpen ? "flex w-full h-full" : "hidden") 
+          : "flex w-96"
       )}>
         <div className="p-8">
           <div className="flex justify-between items-center mb-10">
@@ -120,47 +129,48 @@ const Messages: React.FC = () => {
 
       {/* Chat Area */}
       {activeConv ? (
-        <section className="flex-1 flex flex-col bg-background relative overflow-hidden">
+        <section className={cn(
+           "flex-1 flex flex-col bg-background relative overflow-hidden h-full",
+           isMobile && sidebarOpen ? "hidden" : "flex"
+        )}>
           {/* Header */}
-          <div className="h-24 px-8 flex items-center justify-between border-b border-white/5 backdrop-blur-3xl z-10 shrink-0">
-            <div className="flex items-center gap-4">
+          <div className="h-16 md:h-24 px-4 md:px-8 flex items-center justify-between border-b border-white/5 backdrop-blur-3xl z-10 shrink-0">
+            <div className="flex items-center gap-3 md:gap-4">
               <button 
                 onClick={() => setSidebarOpen(true)}
-                className="md:hidden w-10 h-10 rounded-full bg-white/5 flex items-center justify-center"
+                className="md:hidden p-2 -ml-2 text-primary"
               >
-                <ArrowLeft size={18} />
+                <ArrowLeft size={24} />
               </button>
-              <img src={activeConv.other_user?.avatar_url} className="w-12 h-12 rounded-full object-cover border border-white/10" />
+              <div className="relative">
+                <img src={activeConv.other_user?.avatar_url} className="w-10 h-10 md:w-12 md:h-12 rounded-full object-cover border border-white/10" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />
+              </div>
               <div className="flex flex-col">
-                <span className="text-lg font-black tracking-tight text-white">{activeConv.other_user?.full_name}</span>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.5)]"></div>
-                  <span className="text-[9px] uppercase font-black text-green-500 tracking-widest">Collaborating</span>
-                </div>
+                <span className="text-sm md:text-lg font-black tracking-tight text-white">{activeConv.other_user?.full_name}</span>
+                <span className="text-[8px] md:text-[9px] uppercase font-black text-green-500 tracking-widest">Active Now</span>
               </div>
             </div>
-            <div className="hidden sm:flex gap-4 text-on-surface-variant">
-              <Phone size={20} className="hover:text-primary cursor-pointer transition-all active:scale-90" />
-              <Video size={20} className="hover:text-primary cursor-pointer transition-all active:scale-90" />
-              <div className="w-px h-6 bg-white/10 mx-2" />
-              <Info size={20} className="hover:text-primary cursor-pointer transition-all active:scale-90" />
+            <div className="flex gap-2 md:gap-4 text-on-surface-variant">
+              <Phone size={18} className="md:size-5 hover:text-primary cursor-pointer transition-all active:scale-90" />
+              <Video size={18} className="md:size-5 hover:text-primary cursor-pointer transition-all active:scale-90" />
             </div>
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-10 space-y-8 flex flex-col no-scrollbar scroll-smooth">
+          <div className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 md:space-y-8 flex flex-col no-scrollbar scroll-smooth">
             {messages.map((msg, idx) => {
                const isMe = msg.sender_id === user?.id;
                return (
                   <div 
                     key={msg.id || idx} 
                     className={cn(
-                      "max-w-[75%] flex flex-col gap-2",
+                      "max-w-[85%] md:max-w-[75%] flex flex-col gap-1.5",
                       isMe ? "self-end items-end" : "self-start items-start"
                     )}
                   >
                     <div className={cn(
-                      "px-6 py-4 rounded-[2rem] text-sm font-medium leading-relaxed shadow-xl border",
+                      "px-4 md:px-6 py-3 md:py-4 rounded-[1.2rem] md:rounded-[2rem] text-sm font-medium leading-relaxed shadow-lg border",
                       isMe 
                         ? "bg-primary text-white rounded-br-none border-primary/20" 
                         : "bg-surface-container-high text-on-surface rounded-bl-none border-white/5"
@@ -169,36 +179,36 @@ const Messages: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 text-[8px] font-black text-on-surface-variant uppercase tracking-widest opacity-40 px-2 leading-none">
                       {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      {isMe && <CheckCheck size={12} className="text-primary opacity-100" />}
+                      {isMe && <CheckCheck size={10} className="text-primary" />}
                     </div>
                   </div>
                );
             })}
-            <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} className="pb-4" />
           </div>
 
           {/* Input Area */}
-          <div className="p-8 bg-gradient-to-t from-background via-background to-transparent pt-12 shrink-0">
+          <div className="p-4 md:p-8 bg-background shrink-0 safe-area-bottom">
             <div className="max-w-4xl mx-auto">
-              <div className="bg-surface-container-high/40 backdrop-blur-xl border border-white/10 rounded-full p-2 flex items-center gap-2 group focus-within:border-primary/40 transition-all shadow-2xl">
-                <button className="w-12 h-12 rounded-full flex items-center justify-center text-on-surface-variant hover:text-white hover:bg-white/5 transition-colors">
+              <div className="bg-surface-container-high/60 backdrop-blur-xl border border-white/10 rounded-[1.5rem] md:rounded-full p-1.5 md:p-2 flex items-center gap-1 md:gap-2 group focus-within:border-primary/40 transition-all shadow-2xl">
+                <button className="hidden md:flex w-12 h-12 rounded-full items-center justify-center text-on-surface-variant hover:text-white hover:bg-white/5 transition-colors">
                   <Paperclip size={20} />
                 </button>
                 <input 
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                  placeholder="Type a creative requirement..."
-                  className="flex-1 bg-transparent border-none focus:ring-0 text-on-surface text-sm font-medium placeholder:text-on-surface-variant/40 outline-none px-2"
+                  placeholder="Message..."
+                  className="flex-1 bg-transparent border-none focus:ring-0 text-on-surface text-sm font-medium placeholder:text-on-surface-variant/40 outline-none px-4 py-2"
                 />
                 <Button 
                    onClick={handleSend} 
                    className={cn(
-                       "w-12 h-12 rounded-full p-0 flex items-center justify-center transition-all",
-                       newMessage.trim() ? "bg-primary scale-100" : "bg-white/5 opacity-50 scale-75 grayscale"
+                       "w-10 h-10 md:w-12 md:h-12 rounded-full p-0 flex items-center justify-center transition-all shadow-lg",
+                       newMessage.trim() ? "bg-primary scale-100" : "bg-white/5 opacity-50 scale-90"
                    )}
                 >
-                  <Send size={20} className={cn(newMessage.trim() ? "translate-x-0.5 -translate-y-0.5" : "")} />
+                  <Send size={18} className={cn(newMessage.trim() ? "translate-x-0.5 -translate-y-0.5" : "")} />
                 </Button>
               </div>
             </div>

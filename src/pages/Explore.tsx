@@ -27,6 +27,11 @@ const Explore: React.FC = () => {
           type="text" 
           placeholder="Skills, creators or projects"
           className="w-full h-12 bg-surface rounded-2xl pl-12 pr-4 text-sm font-medium border border-white/5 focus:ring-2 focus:ring-primary/20 outline-none ios-transition"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              navigate(`/search?q=${encodeURIComponent((e.target as HTMLInputElement).value)}`);
+            }
+          }}
         />
       </div>
 
