@@ -3,7 +3,6 @@ import { useGigs } from '../hooks/api/useGigs';
 import { useGigStore } from '../store/useGigStore';
 import GigVideoCard from '../components/gig/GigVideoCard';
 import GigCard from '../components/gig/GigCard';
-import StoryBar from '../components/story/StoryBar';
 import { LayoutGrid, ListFilter, Play } from 'lucide-react';
 
 const HomeFeed: React.FC = () => {
@@ -22,7 +21,6 @@ const HomeFeed: React.FC = () => {
 
   return (
     <div className="pb-32 px-4 md:px-0 max-w-7xl mx-auto">
-      <StoryBar />
       <div className="flex items-center justify-between px-2 py-6">
         <div className="flex items-center gap-2">
           <span className="text-xs font-black uppercase tracking-widest opacity-40">Display</span>

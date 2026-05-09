@@ -52,7 +52,7 @@ const StoryBar: React.FC = () => {
     .map(uid => stories.find(s => s.user_id === uid)!);
 
   return (
-    <div className="flex gap-4 px-4 py-6 overflow-x-auto no-scrollbar items-center bg-background border-b border-white/5">
+    <div className="flex gap-4 px-4 py-6 overflow-x-auto no-scrollbar items-center bg-background">
       {/* My Story / Add Story */}
       <div className="flex flex-col items-center gap-1.5 shrink-0">
         <div className="relative">

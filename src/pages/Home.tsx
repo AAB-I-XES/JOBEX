@@ -1,11 +1,17 @@
 import React from 'react';
 import HomeFeed from './HomeFeed';
+import StoryBar from '../components/story/StoryBar';
 
 const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-background text-on-surface">
       {/* Large iOS Header (Collapses on scroll handled by Navbar/HomeFeed) */}
-      <div className="pt-24 px-6 pb-2">
+      {/* Story Section */}
+      <div className="pt-20">
+         <StoryBar />
+      </div>
+
+      <div className="px-6 py-8">
          <h1 className="text-4xl font-extrabold tracking-tight text-white animate-ios">
             Featured
          </h1>
