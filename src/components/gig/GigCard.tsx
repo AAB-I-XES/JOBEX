@@ -3,17 +3,24 @@ import { Star, CheckCircle } from 'lucide-react';
 import type { Gig } from '../../types/gig';
 import { cn } from '../../utils/helpers';
 
+import { useNavigate } from 'react-router-dom';
+
 interface GigCardProps {
   gig: Gig;
   className?: string;
 }
 
 const GigCard: React.FC<GigCardProps> = ({ gig, className }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className={cn(
-      "group ios-card relative overflow-hidden ios-transition active:scale-[0.98] cursor-pointer",
-      className
-    )}>
+    <div 
+      onClick={() => navigate(`/gig/view/${gig.id}`)}
+      className={cn(
+        "group ios-card relative overflow-hidden ios-transition active:scale-[0.98] cursor-pointer",
+        className
+      )}
+    >
       {/* Media Content */}
       <div className="aspect-[4/5] relative overflow-hidden bg-zinc-900">
         <img 

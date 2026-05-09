@@ -30,6 +30,11 @@ export interface Gig {
   is_trending?: boolean;
   status: GigStatus;
   created_at: string;
+  profiles?: {
+    full_name: string;
+    avatar_url: string;
+    title: string;
+  };
 }
 
 export interface Review {
