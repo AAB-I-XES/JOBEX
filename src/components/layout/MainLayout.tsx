@@ -12,7 +12,7 @@ const MainLayout: React.FC = () => {
   const isGigDetails = location.pathname.includes('/gig/') && !location.pathname.includes('/view/');
   const isMessageView = location.pathname.startsWith('/messages');
 
-  const hideNavbar = isImmersiveView || isStoryView;
+  const hideNavbar = isImmersiveView || isStoryView || isMessageView;
   const hideBottomNav = isImmersiveView || isStoryView || isGigDetails || isMessageView;
   const hideFloatingBtn = isImmersiveView || isStoryView || isMessageView;
 
