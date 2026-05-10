@@ -47,12 +47,15 @@ const Messages: React.FC = () => {
     }
   }, [user]);
 
+  const channelRef = useRef<any>(null);
+
   useEffect(() => {
     if (activeConv) {
       scrollToBottom();
       chatService.getMessages(activeConv.id).then(setMessages);
       
       const channel = supabase.channel(`room-${activeConv.id}`);
+      channelRef.current = channel;
       
       const sub = channel
         .on('postgres_changes', { 
@@ -62,10 +65,23 @@ const Messages: React.FC = () => {
           filter: `conversation_id=eq.${activeConv.id}`
         }, payload => {
           const msg = payload.new as Message;
-          // Ignore messages sent by me (already handled by handleSend optimistically)
           if (msg.sender_id === user?.id) return;
           
-          setMessages(prev => [...prev, msg]);
+          setMessages(prev => {
+            if (prev.find(m => m.id === msg.id)) return prev;
+            return [...prev, msg];
+          });
+          setConversations(prev => prev.map(c => c.id === activeConv.id ? { ...c, last_message: msg.content } : c));
+          scrollToBottom();
+        })
+        .on('broadcast', { event: 'new-message' }, ({ payload }) => {
+          const msg = payload as Message;
+          if (msg.sender_id === user?.id) return;
+
+          setMessages(prev => {
+            if (prev.find(m => m.id === msg.id)) return prev;
+            return [...prev, msg];
+          });
           setConversations(prev => prev.map(c => c.id === activeConv.id ? { ...c, last_message: msg.content } : c));
           scrollToBottom();
         })
@@ -93,22 +109,34 @@ const Messages: React.FC = () => {
     if (!newMessage.trim() || !activeConv || !user) return;
     
     const tempMsg: Message = {
-      id: `temp-${Date.now()}`,
+      id: crypto.randomUUID(), // Use real UUID for better matching
       conversation_id: activeConv.id,
       sender_id: user.id,
       receiver_id: activeConv.other_user?.id || '',
       content: newMessage,
       is_read: false,
       created_at: new Date().toISOString(),
-      isPending: true // Temporary flag
+      isPending: true
     };
 
+    // 1. Instant local update
     setMessages(prev => [...prev, tempMsg]);
     setNewMessage('');
     scrollToBottom();
 
+    // 2. Ultra-fast broadcast (WebSocket)
+    if (channelRef.current) {
+      channelRef.current.send({
+        type: 'broadcast',
+        event: 'new-message',
+        payload: tempMsg
+      });
+    }
+
     try {
+      // 3. Background persistence
       const result = await chatService.sendMessage({
+        id: tempMsg.id, // Pass the same ID to Supabase
         sender_id: user.id,
         receiver_id: activeConv.other_user?.id,
         content: tempMsg.content,
@@ -116,13 +144,11 @@ const Messages: React.FC = () => {
       });
 
       if (result) {
-        setMessages(prev => prev.map(m => m.id === tempMsg.id ? result : m));
-        // Update sidebar last message
+        setMessages(prev => prev.map(m => m.id === tempMsg.id ? { ...result, isPending: false } : m));
         setConversations(prev => prev.map(c => c.id === activeConv.id ? { ...c, last_message: tempMsg.content } : c));
       }
     } catch (err) {
       toast.error("Offline: Message queued");
-      // Still update sidebar for offline messages
       setConversations(prev => prev.map(c => c.id === activeConv.id ? { ...c, last_message: tempMsg.content } : c));
     }
   };
