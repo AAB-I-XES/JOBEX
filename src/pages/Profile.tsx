@@ -21,8 +21,8 @@ const Profile: React.FC = () => {
        await gigService.deleteGig(id);
        removeGig(id);
        toast.success("Skill deleted successfully");
-    } catch (err) {
-       toast.error("Delete failed");
+    } catch (err: any) {
+       toast.error(err.message || "Delete failed");
     }
   };
 
