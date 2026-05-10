@@ -66,7 +66,7 @@ const SearchResults: React.FC = () => {
         </div>
       </header>
 
-      <main className="pt-24 px-6 max-w-7xl mx-auto">
+      <main className="pt-4 px-6 max-w-7xl mx-auto">
         {/* Tabs */}
         <div className="flex gap-8 border-b border-white/5 mb-8 overflow-x-auto no-scrollbar">
           {(['all', 'gigs', 'users'] as const).map((tab) => (

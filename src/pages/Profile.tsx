@@ -33,7 +33,7 @@ const Profile: React.FC = () => {
   const userGigs = gigs.filter(g => g.seller_id === user.id);
 
   return (
-    <div className="pt-24 pb-32 max-w-screen-md mx-auto px-6 min-h-screen ios-scroll">
+    <div className="pt-4 pb-32 max-w-screen-md mx-auto px-6 min-h-screen ios-scroll">
       {/* iOS Profile Header */}
       <section className="flex flex-col items-center text-center space-y-6 mb-12 animate-ios">
         <div className="relative group">

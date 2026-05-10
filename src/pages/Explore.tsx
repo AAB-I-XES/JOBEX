@@ -15,7 +15,7 @@ const Explore: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="pt-24 pb-32 px-6 max-w-2xl mx-auto min-h-screen">
+    <div className="pt-4 pb-32 px-6 max-w-2xl mx-auto min-h-screen">
       <h1 className="text-4xl font-extrabold tracking-tight text-white mb-6 animate-ios">Explore</h1>
 
       {/* iOS Search Bar */}

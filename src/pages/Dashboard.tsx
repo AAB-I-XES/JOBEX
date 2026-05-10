@@ -16,7 +16,7 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="pt-24 px-6 max-w-4xl mx-auto min-h-screen pb-40 ios-scroll">
+    <div className="pt-4 px-6 max-w-4xl mx-auto min-h-screen pb-40 ios-scroll">
       <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2 animate-ios">Dashboard</h1>
       <p className="text-on-surface-variant font-medium text-sm mb-10 opacity-60 uppercase tracking-widest animate-ios">Command Center</p>
 

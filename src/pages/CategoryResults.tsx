@@ -41,7 +41,7 @@ const CategoryResults: React.FC = () => {
         </button>
       </header>
 
-      <main className="pt-24 px-6 max-w-7xl mx-auto">
+      <main className="pt-4 px-6 max-w-7xl mx-auto">
         {/* Search & Sort Bar */}
         <div className="flex gap-3 mb-8 animate-ios">
           <div className="relative flex-1">

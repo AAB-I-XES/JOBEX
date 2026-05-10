@@ -55,7 +55,7 @@ const NotificationIcon: React.FC<{ type: NotificationType }> = ({ type }) => {
 
 const Notifications: React.FC = () => {
   return (
-    <div className="pt-24 pb-28 px-6 max-w-3xl mx-auto min-h-screen">
+    <div className="pt-4 pb-28 px-6 max-w-3xl mx-auto min-h-screen">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-4xl font-black tracking-tighter">Notifications</h1>
