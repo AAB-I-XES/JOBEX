@@ -54,6 +54,15 @@ export const gigService = {
     return data as Gig;
   },
 
+  async deleteGig(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('gigs')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
   async uploadMedia(file: File, path: string): Promise<string> {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;

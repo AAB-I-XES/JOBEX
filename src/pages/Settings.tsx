@@ -1,5 +1,5 @@
 import React from 'react';
-import { Bell, Lock, CreditCard, ChevronRight, Eye, ShieldCheck, HelpCircle } from 'lucide-react';
+import { Bell, Lock, CreditCard, ChevronRight, Eye, ShieldCheck, HelpCircle, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -12,6 +12,7 @@ const Settings: React.FC = () => {
       items: [
         { icon: User, label: "Personal Information", color: "bg-blue-500", path: "/settings/profile" },
         { icon: ShieldCheck, label: "Verification Level 1", extra: "Verified", color: "bg-green-500", path: "/settings/verification" },
+        { icon: Trash2, label: "Trash & Recovery", color: "bg-orange-500", path: "/settings/recovery" },
         { icon: Lock, label: "Password & Security", color: "bg-zinc-600", path: "/settings/security" }
       ]
     },

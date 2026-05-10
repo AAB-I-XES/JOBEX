@@ -12,9 +12,19 @@ import { motion, AnimatePresence } from 'framer-motion';
 const Profile: React.FC = () => {
   const navigate = useNavigate();
   const { user, setUser } = useUserStore();
-  const { gigs } = useGigStore();
+  const { gigs, removeGig } = useGigStore();
   const [activeTab, setActiveTab] = useState<'skills' | 'activity'>('skills');
   
+  const handleDeleteGig = async (id: string) => {
+    try {
+       await gigService.deleteGig(id);
+       removeGig(id);
+       toast.success("Skill deleted successfully");
+    } catch (err) {
+       toast.error("Delete failed");
+    }
+  };
+
   const handleSignOut = async () => {
     try {
       await authService.signOut();
@@ -97,7 +107,7 @@ const Profile: React.FC = () => {
           {activeTab === 'skills' ? (
             <div className="grid grid-cols-2 gap-4">
               {userGigs.map(gig => (
-                <GigCard key={gig.id} gig={gig} />
+                <GigCard key={gig.id} gig={gig} onDelete={handleDeleteGig} />
               ))}
               {userGigs.length === 0 && (
                  <div className="col-span-full py-20 text-center">

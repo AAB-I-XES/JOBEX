@@ -29,6 +29,7 @@ const NotificationSettings = lazy(() => import('./pages/settings/NotificationSet
 const PrivacySettings = lazy(() => import('./pages/settings/PrivacySettings'));
 const PaymentSettings = lazy(() => import('./pages/settings/PaymentSettings'));
 const SupportSettings = lazy(() => import('./pages/settings/SupportSettings'));
+const RecoverySettings = lazy(() => import('./pages/settings/RecoverySettings'));
 import Settings from './pages/Settings';
 import SavedGigs from './pages/SavedGigs';
 import TransactionHistory from './pages/TransactionHistory';
@@ -106,6 +107,7 @@ const AppContent: React.FC = () => {
           <Route path="settings/privacy" element={<PrivacySettings />} />
           <Route path="settings/payments" element={<PaymentSettings />} />
           <Route path="settings/support" element={<SupportSettings />} />
+          <Route path="settings/recovery" element={<RecoverySettings />} />
           <Route path="saved" element={
             <AuthGuard>
               <SavedGigs />

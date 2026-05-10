@@ -1,5 +1,5 @@
 import React from 'react';
-import { Star, CheckCircle } from 'lucide-react';
+import { Star, CheckCircle, Trash2 } from 'lucide-react';
 import type { Gig } from '../../types/gig';
 import { cn } from '../../utils/helpers';
 
@@ -8,10 +8,18 @@ import { useNavigate } from 'react-router-dom';
 interface GigCardProps {
   gig: Gig;
   className?: string;
+  onDelete?: (id: string) => void;
 }
 
-const GigCard: React.FC<GigCardProps> = ({ gig, className }) => {
+const GigCard: React.FC<GigCardProps> = ({ gig, className, onDelete }) => {
   const navigate = useNavigate();
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm("Are you sure you want to delete this skill?")) {
+      onDelete?.(gig.id);
+    }
+  };
 
   return (
     <div 
@@ -36,7 +44,16 @@ const GigCard: React.FC<GigCardProps> = ({ gig, className }) => {
               {gig.category}
             </span>
           </div>
-        </div>
+          {/* Delete Button (if onDelete provided) */}
+        {onDelete && (
+          <button 
+            onClick={handleDelete}
+            className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-error/20 backdrop-blur-md border border-error/30 text-error flex items-center justify-center hover:bg-error hover:text-white transition-all shadow-lg active:scale-90"
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
+      </div>
 
         {/* Price Tag Overlay */}
         <div className="absolute bottom-3 right-3">
