@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Phone, Video, X, Mic, MicOff, Video as VideoIcon, VideoOff, PhoneOff, Maximize2, User } from 'lucide-react';
+import { Phone, Mic, MicOff, Video as VideoIcon, VideoOff, PhoneOff, Maximize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '../../utils/helpers';
 import { supabase } from '../../lib/supabaseClient';
