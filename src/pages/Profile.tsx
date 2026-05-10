@@ -6,6 +6,7 @@ import { useGigStore } from '../store/useGigStore';
 import { Settings, LogOut, Star, ShieldCheck, Mail, ArrowRight, Globe, Plus, LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../features/auth/authService';
+import { gigService } from '../features/gigs/gigService';
 import { toast } from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 

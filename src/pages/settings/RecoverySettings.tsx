@@ -4,9 +4,7 @@ import { ChevronLeft, Trash2, RotateCcw, Clock, AlertCircle } from 'lucide-react
 import { supabase } from '../../lib/supabaseClient';
 import { useUserStore } from '../../store/useUserStore';
 import { useGigStore } from '../../store/useGigStore';
-import Button from '../../components/ui/Button';
 import { toast } from 'react-hot-toast';
-import { cn } from '../../utils/helpers';
 
 const RecoverySettings: React.FC = () => {
   const navigate = useNavigate();
