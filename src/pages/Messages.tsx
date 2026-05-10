@@ -62,6 +62,9 @@ const Messages: React.FC = () => {
           filter: `conversation_id=eq.${activeConv.id}`
         }, payload => {
           const msg = payload.new as Message;
+          // Ignore messages sent by me (already handled by handleSend optimistically)
+          if (msg.sender_id === user?.id) return;
+          
           setMessages(prev => [...prev, msg]);
           setConversations(prev => prev.map(c => c.id === activeConv.id ? { ...c, last_message: msg.content } : c));
           scrollToBottom();
