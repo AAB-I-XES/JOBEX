@@ -7,6 +7,7 @@ export interface Message {
   is_read: boolean;
   file_url?: string;
   created_at: string;
+  isPending?: boolean;
 }
 
 export interface Conversation {
@@ -15,6 +16,7 @@ export interface Conversation {
   user2_id: string;
   last_message?: string;
   last_message_time?: string;
+  updated_at?: string;
   unread_count?: number;
   other_user?: {
     id: string;

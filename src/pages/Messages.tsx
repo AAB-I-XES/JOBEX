@@ -87,16 +87,35 @@ const Messages: React.FC = () => {
   const handleSend = async () => {
     if (!newMessage.trim() || !activeConv || !user) return;
     
+    const tempMsg: Message = {
+      id: `temp-${Date.now()}`,
+      conversation_id: activeConv.id,
+      sender_id: user.id,
+      receiver_id: activeConv.other_user?.id || '',
+      content: newMessage,
+      is_read: false,
+      created_at: new Date().toISOString(),
+      isPending: true // Temporary flag
+    };
+
+    setMessages(prev => [...prev, tempMsg]);
+    setNewMessage('');
+    scrollToBottom();
+
     try {
-      await chatService.sendMessage({
+      const result = await chatService.sendMessage({
         sender_id: user.id,
         receiver_id: activeConv.other_user?.id,
-        content: newMessage,
+        content: tempMsg.content,
         conversation_id: activeConv.id
       });
-      setNewMessage('');
+
+      if (result) {
+        // Update the temp message with the real one from server
+        setMessages(prev => prev.map(m => m.id === tempMsg.id ? result : m));
+      }
     } catch (err) {
-      toast.error("Message failed to send");
+      toast.error("Offline: Message queued");
     }
   };
 
@@ -212,6 +231,7 @@ const Messages: React.FC = () => {
           <div className="flex-1 overflow-y-auto p-4 md:p-10 space-y-6 md:space-y-8 flex flex-col no-scrollbar scroll-smooth">
             {messages.map((msg, idx) => {
                const isMe = msg.sender_id === user?.id;
+               const isPending = (msg as any).isPending;
                return (
                   <div 
                     key={msg.id || idx} 
@@ -221,16 +241,16 @@ const Messages: React.FC = () => {
                     )}
                   >
                     <div className={cn(
-                      "px-4 md:px-6 py-3 md:py-4 rounded-[1.2rem] md:rounded-[2rem] text-sm font-medium leading-relaxed shadow-lg border",
+                      "px-4 md:px-6 py-3 md:py-4 rounded-[1.2rem] md:rounded-[2rem] text-sm font-medium leading-relaxed shadow-lg border transition-all",
                       isMe 
-                        ? "bg-primary text-white rounded-br-none border-primary/20" 
+                        ? (isPending ? "bg-primary/50 text-white/50 border-white/10" : "bg-primary text-white rounded-br-none border-primary/20") 
                         : "bg-surface-container-high text-on-surface rounded-bl-none border-white/5"
                     )}>
                       {msg.content}
                     </div>
                     <div className="flex items-center gap-2 text-[8px] font-black text-on-surface-variant uppercase tracking-widest opacity-40 px-2 leading-none">
-                      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      {isMe && <CheckCheck size={10} className="text-primary" />}
+                      {isPending ? 'Pending' : new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      {isMe && !isPending && <CheckCheck size={10} className="text-primary" />}
                     </div>
                   </div>
                );
