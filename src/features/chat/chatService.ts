@@ -30,7 +30,44 @@ export const chatService = {
       .select()
       .single();
     if (error) throw error;
+    
+    // Update the conversation's last message
+    if (message.conversation_id) {
+      await supabase
+        .from('conversations')
+        .update({ 
+          last_message: message.content,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', message.conversation_id);
+    }
+    
     return data as Message;
+  },
+
+  async getOrCreateConversation(user1Id: string, user2Id: string): Promise<Conversation> {
+    // Check if conversation exists
+    const { data: existing, error: findError } = await supabase
+      .from('conversations')
+      .select('*')
+      .or(`and(user1_id.eq.${user1Id},user2_id.eq.${user2Id}),and(user1_id.eq.${user2Id},user2_id.eq.${user1Id})`)
+      .single();
+
+    if (existing) return existing as Conversation;
+
+    // Create new if not found
+    const { data: created, error: createError } = await supabase
+      .from('conversations')
+      .insert({
+        user1_id: user1Id,
+        user2_id: user2Id,
+        updated_at: new Date().toISOString()
+      })
+      .select()
+      .single();
+
+    if (createError) throw createError;
+    return created as Conversation;
   },
 
   subscribeToMessages(conversationId: string, callback: (message: Message) => void) {

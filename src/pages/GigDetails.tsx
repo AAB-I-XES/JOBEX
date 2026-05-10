@@ -6,6 +6,8 @@ import { Star, Shield, CheckCircle, Clock, RotateCcw, MessageCircle, ArrowLeft, 
 import Button from '../components/ui/Button';
 import { formatPrice } from '../utils/helpers';
 import { toast } from 'react-hot-toast';
+import { chatService } from '../features/chat/chatService';
+import { useUserStore } from '../store/useUserStore';
 
 const GigDetails: React.FC = () => {
   const { id } = useParams();
@@ -30,8 +32,24 @@ const GigDetails: React.FC = () => {
     // Simulate navigation to checkout or processing
   };
 
-  const handleChat = () => {
-    navigate('/messages');
+  const { user: currentUser } = useUserStore();
+
+  const handleChat = async () => {
+    if (!currentUser) {
+      toast.error("Please login to contact seller");
+      navigate('/login');
+      return;
+    }
+    if (!gig) return;
+
+    const loadingToast = toast.loading('Opening chat...');
+    try {
+      await chatService.getOrCreateConversation(currentUser.id, gig.seller_id);
+      toast.dismiss(loadingToast);
+      navigate('/messages');
+    } catch (err) {
+      toast.error("Failed to open chat", { id: loadingToast });
+    }
   };
 
   if (isLoading) {

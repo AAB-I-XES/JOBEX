@@ -55,8 +55,10 @@ const PublicProfile: React.FC = () => {
     }
 
     try {
-      // Logic to find or create conversation
+      const conv = await chatService.getOrCreateConversation(currentUser.id, userId!);
+      
       await chatService.sendMessage({
+         conversation_id: conv.id,
          sender_id: currentUser.id,
          receiver_id: userId!,
          content: "Hi! I'm interested in your services."

@@ -62,7 +62,7 @@ const Messages: React.FC = () => {
         sender_id: user.id,
         receiver_id: activeConv.other_user?.id,
         content: newMessage,
-        // conversation_id: activeConv.id
+        conversation_id: activeConv.id
       });
       setNewMessage('');
     } catch (err) {
