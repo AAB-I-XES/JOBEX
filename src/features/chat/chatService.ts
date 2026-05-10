@@ -47,7 +47,7 @@ export const chatService = {
 
   async getOrCreateConversation(user1Id: string, user2Id: string): Promise<Conversation> {
     // Check if conversation exists
-    const { data: existing, error: findError } = await supabase
+    const { data: existing } = await supabase
       .from('conversations')
       .select('*')
       .or(`and(user1_id.eq.${user1Id},user2_id.eq.${user2Id}),and(user1_id.eq.${user2Id},user2_id.eq.${user1Id})`)
