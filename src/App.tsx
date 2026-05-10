@@ -20,6 +20,15 @@ const SearchResults = lazy(() => import('./pages/SearchResults'));
 const PublicProfile = lazy(() => import('./pages/PublicProfile'));
 const GigImmersiveView = lazy(() => import('./pages/GigImmersiveView'));
 const StoryImmersiveView = lazy(() => import('./components/story/StoryImmersiveView'));
+
+// Settings Sub-pages
+const ProfileSettings = lazy(() => import('./pages/settings/ProfileSettings'));
+const VerificationSettings = lazy(() => import('./pages/settings/VerificationSettings'));
+const SecuritySettings = lazy(() => import('./pages/settings/SecuritySettings'));
+const NotificationSettings = lazy(() => import('./pages/settings/NotificationSettings'));
+const PrivacySettings = lazy(() => import('./pages/settings/PrivacySettings'));
+const PaymentSettings = lazy(() => import('./pages/settings/PaymentSettings'));
+const SupportSettings = lazy(() => import('./pages/settings/SupportSettings'));
 import Settings from './pages/Settings';
 import SavedGigs from './pages/SavedGigs';
 import TransactionHistory from './pages/TransactionHistory';
@@ -90,6 +99,13 @@ const AppContent: React.FC = () => {
           <Route path="notifications" element={<Notifications />} />
           <Route path="profile" element={<Profile />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="settings/profile" element={<ProfileSettings />} />
+          <Route path="settings/verification" element={<VerificationSettings />} />
+          <Route path="settings/security" element={<SecuritySettings />} />
+          <Route path="settings/notifications" element={<NotificationSettings />} />
+          <Route path="settings/privacy" element={<PrivacySettings />} />
+          <Route path="settings/payments" element={<PaymentSettings />} />
+          <Route path="settings/support" element={<SupportSettings />} />
           <Route path="saved" element={
             <AuthGuard>
               <SavedGigs />

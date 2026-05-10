@@ -1,37 +1,38 @@
 import React from 'react';
 import { Bell, Lock, CreditCard, ChevronRight, Eye, ShieldCheck, HelpCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 
 const Settings: React.FC = () => {
-
+  const navigate = useNavigate();
 
   const sections = [
     {
       title: "Account",
       items: [
-        { icon: User, label: "Personal Information", color: "bg-blue-500" },
-        { icon: ShieldCheck, label: "Verification Level 1", extra: "Verified", color: "bg-green-500" },
-        { icon: Lock, label: "Password & Security", color: "bg-zinc-600" }
+        { icon: User, label: "Personal Information", color: "bg-blue-500", path: "/settings/profile" },
+        { icon: ShieldCheck, label: "Verification Level 1", extra: "Verified", color: "bg-green-500", path: "/settings/verification" },
+        { icon: Lock, label: "Password & Security", color: "bg-zinc-600", path: "/settings/security" }
       ]
     },
     {
       title: "Notifications",
       items: [
-        { icon: Bell, label: "Push Notifications", color: "bg-orange-500" },
-        { icon: Eye, label: "Privacy Settings", color: "bg-indigo-500" }
+        { icon: Bell, label: "Push Notifications", color: "bg-orange-500", path: "/settings/notifications" },
+        { icon: Eye, label: "Privacy Settings", color: "bg-indigo-500", path: "/settings/privacy" }
       ]
     },
     {
       title: "Billing",
       items: [
-        { icon: CreditCard, label: "Payment Methods", color: "bg-pink-500" },
-        { icon: HelpCircle, label: "Billing Support", color: "bg-cyan-500" }
+        { icon: CreditCard, label: "Payment Methods", color: "bg-pink-500", path: "/settings/payments" },
+        { icon: HelpCircle, label: "Billing Support", color: "bg-cyan-500", path: "/settings/support" }
       ]
     }
   ];
 
   return (
-    <div className="pt-24 pb-32 max-w-screen-md mx-auto px-6 h-screen ios-scroll">
+    <div className="pt-4 pb-32 max-w-screen-md mx-auto px-6 h-screen ios-scroll">
       <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2 animate-ios">Settings</h1>
       <p className="text-on-surface-variant font-medium text-sm mb-10 opacity-60 uppercase tracking-widest animate-ios">Preferences</p>
 
@@ -43,6 +44,7 @@ const Settings: React.FC = () => {
                 {section.items.map((item, iIdx) => (
                   <button 
                     key={iIdx}
+                    onClick={() => item.path && navigate(item.path)}
                     className="w-full flex items-center justify-between p-4 px-6 hover:bg-white/5 active:bg-white/10 transition-all text-left group"
                   >
                     <div className="flex items-center gap-4">
