@@ -70,6 +70,8 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
     }
   };
 
+  const remoteAudioRef = useRef<HTMLAudioElement>(null);
+
   const initPeerConnection = (stream: MediaStream) => {
     const peer = new RTCPeerConnection(configuration);
     
@@ -81,11 +83,24 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
       }
     };
 
+    peer.onconnectionstatechange = () => {
+      console.log('[WebRTC] Connection State:', peer.connectionState);
+      if (peer.connectionState === 'connected') {
+        setCallStatus('active');
+      } else if (peer.connectionState === 'failed' || peer.connectionState === 'closed') {
+        handleEndCall();
+      }
+    };
+
     peer.ontrack = (event) => {
       console.log('[WebRTC] Remote track received');
       remoteStream.current = event.streams[0];
-      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0];
-      setCallStatus('active');
+      
+      if (type === 'video' && remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = event.streams[0];
+      } else if (remoteAudioRef.current) {
+        remoteAudioRef.current.srcObject = event.streams[0];
+      }
     };
 
     pc.current = peer;
@@ -216,6 +231,9 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
               </p>
             </div>
           </div>
+
+          {/* Hidden audio for voice-only calls */}
+          <audio ref={remoteAudioRef} autoPlay />
 
           {/* Video Feeds */}
           {type === 'video' && callStatus === 'active' && (
