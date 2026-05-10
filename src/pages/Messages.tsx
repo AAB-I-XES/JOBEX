@@ -61,7 +61,9 @@ const Messages: React.FC = () => {
           table: 'messages',
           filter: `conversation_id=eq.${activeConv.id}`
         }, payload => {
-          setMessages(prev => [...prev, payload.new as Message]);
+          const msg = payload.new as Message;
+          setMessages(prev => [...prev, msg]);
+          setConversations(prev => prev.map(c => c.id === activeConv.id ? { ...c, last_message: msg.content } : c));
           scrollToBottom();
         })
         .on('broadcast', { event: 'call-signal' }, ({ payload }) => {
@@ -111,11 +113,14 @@ const Messages: React.FC = () => {
       });
 
       if (result) {
-        // Update the temp message with the real one from server
         setMessages(prev => prev.map(m => m.id === tempMsg.id ? result : m));
+        // Update sidebar last message
+        setConversations(prev => prev.map(c => c.id === activeConv.id ? { ...c, last_message: tempMsg.content } : c));
       }
     } catch (err) {
       toast.error("Offline: Message queued");
+      // Still update sidebar for offline messages
+      setConversations(prev => prev.map(c => c.id === activeConv.id ? { ...c, last_message: tempMsg.content } : c));
     }
   };
 
@@ -176,7 +181,12 @@ const Messages: React.FC = () => {
                     <span className="font-extrabold text-on-surface truncate group-hover:text-primary transition-colors">{conv.other_user?.full_name}</span>
                     <span className="text-[9px] uppercase font-black text-on-surface-variant opacity-40">2m</span>
                   </div>
-                  <p className="text-xs truncate text-on-surface-variant font-medium">{conv.last_message || 'Start a new conversation...'}</p>
+                  <p className={cn(
+                    "text-xs truncate font-medium",
+                    conv.last_message ? "text-on-surface-variant" : "text-primary/60 italic"
+                  )}>
+                    {conv.last_message || 'Start syncing...'}
+                  </p>
                 </div>
               </div>
             )) : (
