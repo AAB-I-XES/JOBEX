@@ -23,7 +23,7 @@ const RecoverySettings: React.FC = () => {
       const { data, error } = await supabase
         .from('gigs_archive')
         .select('*')
-        .eq('seller_id', user.id)
+        .or(`seller_id.eq.${user.id},user_id.eq.${user.id}`)
         .order('deleted_at', { ascending: false });
 
       if (error) throw error;
