@@ -76,12 +76,12 @@ const Messages: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen pt-16 pb-28 md:pb-0 overflow-hidden bg-background">
+    <div className="flex h-screen pb-0 md:pb-0 overflow-hidden bg-background relative">
       {/* Sidebar */}
       <aside className={cn(
-        "bg-surface-container-low border-r border-white/5 flex-col transition-all duration-300 z-30",
+        "bg-surface-container-low md:border-r border-white/5 flex-col transition-all duration-300 z-30",
         isMobile 
-          ? (sidebarOpen ? "flex w-full h-full" : "hidden") 
+          ? (sidebarOpen ? "flex w-full absolute inset-0 pt-0" : "hidden") 
           : "flex w-96"
       )}>
         <div className="p-8">
@@ -215,7 +215,10 @@ const Messages: React.FC = () => {
           </div>
         </section>
       ) : (
-        <div className="flex-1 flex flex-col items-center justify-center p-8 bg-background text-center space-y-8 animate-in fade-in duration-500">
+        <div className={cn(
+          "flex-1 flex flex-col items-center justify-center p-8 bg-background text-center space-y-8 animate-in fade-in duration-500",
+          isMobile && "hidden"
+        )}>
           <div className="w-24 h-24 rounded-[2.5rem] bg-surface-container-low flex items-center justify-center text-primary shadow-2xl skew-y-3 rotate-3">
              <MessageCircle size={48} className="-rotate-12" />
           </div>
