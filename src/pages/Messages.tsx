@@ -7,6 +7,7 @@ import { cn } from '../utils/helpers';
 import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabaseClient';
 import { toast } from 'react-hot-toast';
+import CallOverlay from '../components/chat/CallOverlay';
 
 const Messages: React.FC = () => {
   const { user } = useUserStore();
@@ -16,6 +17,10 @@ const Messages: React.FC = () => {
   const [newMessage, setNewMessage] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [callType, setCallType] = useState<'audio' | 'video'>('audio');
+  const [showCall, setShowCall] = useState(false);
+  const [isIncoming, setIsIncoming] = useState(false);
+  const [latestSignal, setLatestSignal] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,6 +31,12 @@ const Messages: React.FC = () => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleStartCall = (type: 'audio' | 'video') => {
+    setCallType(type);
+    setIsIncoming(false);
+    setShowCall(true);
   };
 
   useEffect(() => {
@@ -41,16 +52,35 @@ const Messages: React.FC = () => {
       scrollToBottom();
       chatService.getMessages(activeConv.id).then(setMessages);
       
-      const sub = chatService.subscribeToMessages(activeConv.id, (msg) => {
-        setMessages(prev => [...prev, msg]);
-        scrollToBottom();
-      });
+      const channel = supabase.channel(`room-${activeConv.id}`);
+      
+      const sub = channel
+        .on('postgres_changes', { 
+          event: 'INSERT', 
+          schema: 'public', 
+          table: 'messages',
+          filter: `conversation_id=eq.${activeConv.id}`
+        }, payload => {
+          setMessages(prev => [...prev, payload.new as Message]);
+          scrollToBottom();
+        })
+        .on('broadcast', { event: 'call-signal' }, ({ payload }) => {
+          console.log('[Call] Signal Received:', payload.type);
+          if (payload.type === 'initiate' && payload.receiver_id === user?.id) {
+             setCallType(payload.callType);
+             setIsIncoming(true);
+             setShowCall(true);
+          } else {
+             setLatestSignal(payload);
+          }
+        })
+        .subscribe();
       
       return () => {
         supabase.removeChannel(sub);
       };
     }
-  }, [activeConv]);
+  }, [activeConv, user?.id]);
 
   useEffect(scrollToBottom, [messages]);
 
@@ -77,6 +107,19 @@ const Messages: React.FC = () => {
 
   return (
     <div className="flex h-screen pb-0 md:pb-0 overflow-hidden bg-background relative">
+      {/* Call Overlay Integration */}
+      {activeConv && activeConv.other_user && (
+        <CallOverlay 
+          isOpen={showCall}
+          onClose={() => { setShowCall(false); setIsIncoming(false); }}
+          type={callType}
+          user={activeConv.other_user}
+          isIncoming={isIncoming}
+          conversationId={activeConv.id}
+          latestSignal={latestSignal}
+        />
+      )}
+
       {/* Sidebar */}
       <aside className={cn(
         "bg-surface-container-low md:border-r border-white/5 flex-col transition-all duration-300 z-30",
@@ -152,8 +195,16 @@ const Messages: React.FC = () => {
               </div>
             </div>
             <div className="flex gap-2 md:gap-4 text-on-surface-variant">
-              <Phone size={18} className="md:size-5 hover:text-primary cursor-pointer transition-all active:scale-90" />
-              <Video size={18} className="md:size-5 hover:text-primary cursor-pointer transition-all active:scale-90" />
+              <Phone 
+                size={18} 
+                className="md:size-5 hover:text-primary cursor-pointer transition-all active:scale-90" 
+                onClick={() => handleStartCall('audio')}
+              />
+              <Video 
+                size={18} 
+                className="md:size-5 hover:text-primary cursor-pointer transition-all active:scale-90" 
+                onClick={() => handleStartCall('video')}
+              />
             </div>
           </div>
 
