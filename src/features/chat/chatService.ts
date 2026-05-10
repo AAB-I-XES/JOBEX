@@ -5,11 +5,16 @@ export const chatService = {
   async getConversations(userId: string): Promise<Conversation[]> {
     const { data, error } = await supabase
       .from('conversations')
-      .select('*, profiles!user2_id(*)') 
-      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`);
+      .select('*, user1:profiles!user1_id(*), user2:profiles!user2_id(*)') 
+      .or(`user1_id.eq.${userId},user2_id.eq.${userId}`)
+      .order('updated_at', { ascending: false });
     
     if (error) throw error;
-    return (data as unknown) as Conversation[];
+    
+    return (data as any[]).map(conv => ({
+      ...conv,
+      other_user: conv.user1_id === userId ? conv.user2 : conv.user1
+    })) as Conversation[];
   },
 
   async getMessages(conversationId: string): Promise<Message[]> {
