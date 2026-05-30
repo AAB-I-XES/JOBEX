@@ -58,7 +58,9 @@ const Profile: React.FC = () => {
 
         <div className="space-y-1">
           <h1 className="text-3xl font-extrabold tracking-tight text-white">{user.full_name}</h1>
-          <p className="text-primary font-bold text-xs uppercase tracking-widest">Verified Creator</p>
+          <p className={`font-bold text-xs uppercase tracking-widest ${user.is_verified ? 'text-primary' : 'text-zinc-500'}`}>
+            {user.is_verified ? 'Verified Creator' : 'Rookie'}
+          </p>
         </div>
 
         <div className="flex gap-10">
@@ -129,9 +131,11 @@ const Profile: React.FC = () => {
                <div className="ios-list-item px-6 py-4">
                   <div>
                     <p className="text-sm font-bold text-white leading-none mb-1">Verification Status</p>
-                    <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest">Verified Level 1</p>
+                    <p className={`text-[10px] font-bold uppercase tracking-widest ${user.is_verified ? 'text-green-500' : 'text-zinc-500'}`}>
+                      {user.is_verified ? 'Verified Level 1' : 'Unverified (Rookie)'}
+                    </p>
                   </div>
-                  <ShieldCheck size={18} className="text-green-500" />
+                  <ShieldCheck size={18} className={user.is_verified ? 'text-green-500' : 'text-zinc-500'} />
                </div>
             </div>
           )}
