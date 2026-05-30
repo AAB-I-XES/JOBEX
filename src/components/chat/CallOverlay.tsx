@@ -82,7 +82,15 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
 
     peer.onicecandidate = (event) => {
       if (event.candidate) {
-        sendSignal({ type: 'candidate', candidate: event.candidate });
+        sendSignal({ 
+          type: 'candidate', 
+          candidate: {
+            candidate: event.candidate.candidate,
+            sdpMid: event.candidate.sdpMid,
+            sdpMLineIndex: event.candidate.sdpMLineIndex,
+            usernameFragment: event.candidate.usernameFragment
+          }
+        });
       }
     };
 
@@ -120,7 +128,14 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
     const offer = await peer.createOffer();
     await peer.setLocalDescription(offer);
 
-    sendSignal({ type: 'initiate', callType: type, offer });
+    sendSignal({ 
+      type: 'initiate', 
+      callType: type, 
+      offer: {
+        type: offer.type,
+        sdp: offer.sdp
+      } 
+    });
   };
 
   // Accept Call (as Receiver)
@@ -135,7 +150,13 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
     const answer = await peer.createAnswer();
     await peer.setLocalDescription(answer);
 
-    sendSignal({ type: 'answer', answer });
+    sendSignal({ 
+      type: 'answer', 
+      answer: {
+        type: answer.type,
+        sdp: answer.sdp
+      } 
+    });
 
     // Process any queued candidates received before remote description was set
     while (queuedCandidates.current.length > 0) {
