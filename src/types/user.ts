@@ -10,5 +10,4 @@ export interface User {
   response_rate?: number;
   on_time_delivery?: number;
   created_at: string;
-  is_verified?: boolean;
 }
