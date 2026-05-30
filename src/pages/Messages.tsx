@@ -20,7 +20,7 @@ const Messages: React.FC = () => {
   const [callType, setCallType] = useState<'audio' | 'video'>('audio');
   const [showCall, setShowCall] = useState(false);
   const [isIncoming, setIsIncoming] = useState(false);
-  const [latestSignal, setLatestSignal] = useState<any>(null);
+  const [signalQueue, setSignalQueue] = useState<any[]>([]);
   const [incomingOffer, setIncomingOffer] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -93,8 +93,9 @@ const Messages: React.FC = () => {
              setIsIncoming(true);
              setIncomingOffer(payload.offer);
              setShowCall(true);
+             setSignalQueue([]);
           } else if (payload.receiver_id === user?.id) {
-             setLatestSignal(payload);
+             setSignalQueue(prev => [...prev, payload]);
           }
         })
         .subscribe();
@@ -170,13 +171,13 @@ const Messages: React.FC = () => {
             setShowCall(false); 
             setIsIncoming(false); 
             setIncomingOffer(null);
-            setLatestSignal(null);
+            setSignalQueue([]);
           }}
           type={callType}
           user={activeConv.other_user}
           isIncoming={isIncoming}
           conversationId={activeConv.id}
-          latestSignal={latestSignal}
+          signalQueue={signalQueue}
           incomingOffer={incomingOffer}
         />
       )}

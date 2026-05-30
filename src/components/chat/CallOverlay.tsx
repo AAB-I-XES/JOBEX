@@ -16,7 +16,7 @@ interface CallOverlayProps {
   };
   isIncoming: boolean;
   conversationId: string;
-  latestSignal?: any;
+  signalQueue?: any[];
   incomingOffer?: any;
 }
 
@@ -34,7 +34,7 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
   user: remoteUser, 
   isIncoming, 
   conversationId, 
-  latestSignal,
+  signalQueue,
   incomingOffer
 }) => {
   const { user: currentUser } = useUserStore();
@@ -45,10 +45,18 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
   
   const pc = useRef<RTCPeerConnection | null>(null);
   const queuedCandidates = useRef<any[]>([]);
+  const lastProcessedIndex = useRef(0);
   const localStream = useRef<MediaStream | null>(null);
   const remoteStream = useRef<MediaStream | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+  // Reset process index when overlay opens
+  useEffect(() => {
+    if (isOpen) {
+      lastProcessedIndex.current = 0;
+    }
+  }, [isOpen]);
 
   // Signaling helper
   const sendSignal = (payload: any) => {
@@ -181,44 +189,50 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
     }
   }, [isOpen]);
 
-  // Handle incoming signals
+  // Handle incoming signals sequentially
   useEffect(() => {
-    if (!latestSignal) return;
+    if (!signalQueue) return;
 
-    const handle = async () => {
-      const { type, answer, candidate } = latestSignal;
-      
-      if (type === 'answer') {
-        if (pc.current) {
-          await pc.current.setRemoteDescription(new RTCSessionDescription(answer));
-          
-          // Process any queued candidates received before answer description was set
-          while (queuedCandidates.current.length > 0) {
-            const cand = queuedCandidates.current.shift();
-            try {
-              await pc.current.addIceCandidate(new RTCIceCandidate(cand));
-            } catch (err) {
-              console.error('Failed to add queued candidate:', err);
+    const processQueue = async () => {
+      while (lastProcessedIndex.current < signalQueue.length) {
+        const signal = signalQueue[lastProcessedIndex.current];
+        lastProcessedIndex.current++;
+
+        const { type, answer, candidate } = signal;
+        
+        if (type === 'answer') {
+          if (pc.current) {
+            await pc.current.setRemoteDescription(new RTCSessionDescription(answer));
+            
+            // Process any queued candidates received before answer description was set
+            while (queuedCandidates.current.length > 0) {
+              const cand = queuedCandidates.current.shift();
+              try {
+                await pc.current.addIceCandidate(new RTCIceCandidate(cand));
+              } catch (err) {
+                console.error('Failed to add queued candidate:', err);
+              }
             }
           }
-        }
-      } else if (type === 'candidate') {
-        if (pc.current && pc.current.remoteDescription) {
-          try {
-            await pc.current.addIceCandidate(new RTCIceCandidate(candidate));
-          } catch (err) {
-            console.error('Failed to add candidate:', err);
+        } else if (type === 'candidate') {
+          if (pc.current && pc.current.remoteDescription) {
+            try {
+              await pc.current.addIceCandidate(new RTCIceCandidate(candidate));
+            } catch (err) {
+              console.error('Failed to add candidate:', err);
+            }
+          } else {
+            queuedCandidates.current.push(candidate);
           }
-        } else {
-          queuedCandidates.current.push(candidate);
+        } else if (type === 'end') {
+          setCallStatus('ended');
+          setTimeout(onClose, 1000);
         }
-      } else if (type === 'end') {
-        setCallStatus('ended');
-        setTimeout(onClose, 1000);
       }
     };
-    handle();
-  }, [latestSignal]);
+    
+    processQueue();
+  }, [signalQueue, onClose]);
 
   useEffect(() => {
     let interval: any;
