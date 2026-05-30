@@ -8,8 +8,10 @@ import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabaseClient';
 import { toast } from 'react-hot-toast';
 import CallOverlay from '../components/chat/CallOverlay';
+import { useNavigate } from 'react-router-dom';
 
 const Messages: React.FC = () => {
+  const navigate = useNavigate();
   const { user } = useUserStore();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeConv, setActiveConv] = useState<Conversation | null>(null);
@@ -191,7 +193,15 @@ const Messages: React.FC = () => {
       )}>
         <div className="p-8">
           <div className="flex justify-between items-center mb-10">
-            <h2 className="text-3xl font-black tracking-tighter">Nexus</h2>
+            <div className="flex items-center gap-4">
+              <button 
+                onClick={() => navigate(-1)}
+                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+              >
+                <ArrowLeft size={20} className="text-on-surface" />
+              </button>
+              <h2 className="text-3xl font-black tracking-tighter">Messages</h2>
+            </div>
             <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
                <MoreHorizontal size={20} className="text-on-surface-variant" />
             </div>
