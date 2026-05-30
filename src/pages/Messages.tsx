@@ -21,6 +21,7 @@ const Messages: React.FC = () => {
   const [showCall, setShowCall] = useState(false);
   const [isIncoming, setIsIncoming] = useState(false);
   const [latestSignal, setLatestSignal] = useState<any>(null);
+  const [incomingOffer, setIncomingOffer] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -90,8 +91,9 @@ const Messages: React.FC = () => {
           if (payload.type === 'initiate' && payload.receiver_id === user?.id) {
              setCallType(payload.callType);
              setIsIncoming(true);
+             setIncomingOffer(payload.offer);
              setShowCall(true);
-          } else {
+          } else if (payload.receiver_id === user?.id) {
              setLatestSignal(payload);
           }
         })
@@ -164,12 +166,18 @@ const Messages: React.FC = () => {
       {activeConv && activeConv.other_user && (
         <CallOverlay 
           isOpen={showCall}
-          onClose={() => { setShowCall(false); setIsIncoming(false); }}
+          onClose={() => { 
+            setShowCall(false); 
+            setIsIncoming(false); 
+            setIncomingOffer(null);
+            setLatestSignal(null);
+          }}
           type={callType}
           user={activeConv.other_user}
           isIncoming={isIncoming}
           conversationId={activeConv.id}
           latestSignal={latestSignal}
+          incomingOffer={incomingOffer}
         />
       )}
 

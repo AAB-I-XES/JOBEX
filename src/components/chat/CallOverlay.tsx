@@ -17,6 +17,7 @@ interface CallOverlayProps {
   isIncoming: boolean;
   conversationId: string;
   latestSignal?: any;
+  incomingOffer?: any;
 }
 
 const configuration = {
@@ -33,7 +34,8 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
   user: remoteUser, 
   isIncoming, 
   conversationId, 
-  latestSignal 
+  latestSignal,
+  incomingOffer
 }) => {
   const { user: currentUser } = useUserStore();
   const [callStatus, setCallStatus] = useState<'idle' | 'connecting' | 'ringing' | 'active' | 'ended'>('idle');
@@ -42,6 +44,7 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
   const [duration, setDuration] = useState(0);
   
   const pc = useRef<RTCPeerConnection | null>(null);
+  const queuedCandidates = useRef<any[]>([]);
   const localStream = useRef<MediaStream | null>(null);
   const remoteStream = useRef<MediaStream | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -133,6 +136,16 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
     await peer.setLocalDescription(answer);
 
     sendSignal({ type: 'answer', answer });
+
+    // Process any queued candidates received before remote description was set
+    while (queuedCandidates.current.length > 0) {
+      const cand = queuedCandidates.current.shift();
+      try {
+        await peer.addIceCandidate(new RTCIceCandidate(cand));
+      } catch (err) {
+        console.error('Failed to add queued candidate:', err);
+      }
+    }
   };
 
   useEffect(() => {
@@ -149,15 +162,35 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
 
   // Handle incoming signals
   useEffect(() => {
-    if (!latestSignal || !pc.current) return;
+    if (!latestSignal) return;
 
     const handle = async () => {
       const { type, answer, candidate } = latestSignal;
       
       if (type === 'answer') {
-        await pc.current?.setRemoteDescription(new RTCSessionDescription(answer));
+        if (pc.current) {
+          await pc.current.setRemoteDescription(new RTCSessionDescription(answer));
+          
+          // Process any queued candidates received before answer description was set
+          while (queuedCandidates.current.length > 0) {
+            const cand = queuedCandidates.current.shift();
+            try {
+              await pc.current.addIceCandidate(new RTCIceCandidate(cand));
+            } catch (err) {
+              console.error('Failed to add queued candidate:', err);
+            }
+          }
+        }
       } else if (type === 'candidate') {
-        await pc.current?.addIceCandidate(new RTCIceCandidate(candidate));
+        if (pc.current && pc.current.remoteDescription) {
+          try {
+            await pc.current.addIceCandidate(new RTCIceCandidate(candidate));
+          } catch (err) {
+            console.error('Failed to add candidate:', err);
+          }
+        } else {
+          queuedCandidates.current.push(candidate);
+        }
       } else if (type === 'end') {
         setCallStatus('ended');
         setTimeout(onClose, 1000);
@@ -178,6 +211,7 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
     localStream.current?.getTracks().forEach(t => t.stop());
     pc.current?.close();
     pc.current = null;
+    queuedCandidates.current = [];
     setDuration(0);
     setCallStatus('idle');
   };
@@ -265,7 +299,7 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
           {callStatus === 'ringing' && isIncoming && (
             <div className="flex gap-10 relative z-50">
                <button 
-                 onClick={() => acceptCall(latestSignal.offer)}
+                 onClick={() => acceptCall(incomingOffer)}
                  className="w-20 h-20 rounded-full bg-success text-white flex items-center justify-center shadow-2xl shadow-success/30 active:scale-95 transition-all animate-bounce"
                >
                  <Phone size={32} />
