@@ -186,59 +186,77 @@ const Messages: React.FC = () => {
 
       {/* Sidebar */}
       <aside className={cn(
-        "bg-surface-container-low md:border-r border-white/5 flex-col transition-all duration-300 z-30",
+        "bg-surface-container-low md:border-r border-white/5 flex-col transition-all duration-300 z-30 h-full",
         isMobile 
           ? (sidebarOpen ? "flex w-full absolute inset-0 pt-0" : "hidden") 
           : "flex w-96"
       )}>
-        <div className="p-8">
-          <div className="flex justify-between items-center mb-10">
-            <div className="flex items-center gap-4">
-              <button 
-                onClick={() => navigate(-1)}
-                className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
-              >
-                <ArrowLeft size={20} className="text-on-surface" />
-              </button>
-              <h2 className="text-3xl font-black tracking-tighter">Messages</h2>
+        <div className="flex flex-col h-full overflow-hidden">
+          {/* Header */}
+          <div className="p-6 pb-4 shrink-0 border-b border-white/5">
+            <div className="flex justify-between items-center mb-6">
+              <div className="flex items-center gap-3">
+                <button 
+                  onClick={() => navigate(-1)}
+                  className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
+                >
+                  <ArrowLeft size={18} className="text-on-surface" />
+                </button>
+                <h2 className="text-2xl font-bold tracking-tight">Messages</h2>
+              </div>
+              <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center cursor-pointer hover:bg-white/10 transition-colors">
+                 <MoreHorizontal size={18} className="text-on-surface-variant" />
+              </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
-               <MoreHorizontal size={20} className="text-on-surface-variant" />
-            </div>
+            
+            <span className="text-[10px] font-bold uppercase text-primary/80 tracking-[0.15em] block">ACTIVE CHATS</span>
           </div>
           
-          <div className="space-y-4">
-             <span className="text-[10px] font-black uppercase text-primary tracking-[0.2em] px-2 block mb-4">ACTIVE CHATS</span>
-            {conversations.length > 0 ? conversations.map((conv) => (
-              <div 
-                key={conv.id}
-                onClick={() => selectConversation(conv)}
-                className={cn(
-                  "flex items-center gap-4 p-5 rounded-[1.5rem] transition-all cursor-pointer border group",
-                  activeConv?.id === conv.id 
-                    ? "bg-primary/10 border-primary/20 shadow-xl" 
-                    : "bg-surface-container border-white/5 hover:border-white/10 opacity-70 hover:opacity-100"
-                )}
-              >
-                <div className="relative shrink-0">
-                  <img src={conv.other_user?.avatar_url} className="w-14 h-14 rounded-full object-cover border-2 border-background" />
-                  <div className="absolute top-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-background" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-baseline mb-1">
-                    <span className="font-extrabold text-on-surface truncate group-hover:text-primary transition-colors">{conv.other_user?.full_name}</span>
-                    <span className="text-[9px] uppercase font-black text-on-surface-variant opacity-40">2m</span>
+          {/* Scrollable Chat List */}
+          <div className="flex-1 overflow-y-auto divide-y divide-white/5">
+            {conversations.length > 0 ? conversations.map((conv) => {
+              const isActive = activeConv?.id === conv.id;
+              return (
+                <div 
+                  key={conv.id}
+                  onClick={() => selectConversation(conv)}
+                  className={cn(
+                    "flex items-center gap-3.5 px-6 py-4.5 transition-all cursor-pointer relative border-l-2 group",
+                    isActive 
+                      ? "bg-white/[0.04] border-primary" 
+                      : "border-transparent hover:bg-white/[0.02]"
+                  )}
+                >
+                  <div className="relative shrink-0">
+                    <img 
+                      src={conv.other_user?.avatar_url} 
+                      className="w-12 h-12 rounded-full object-cover border border-white/10" 
+                      alt={conv.other_user?.full_name}
+                    />
+                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-surface-container-low" />
                   </div>
-                  <p className={cn(
-                    "text-xs truncate font-medium",
-                    conv.last_message ? "text-on-surface-variant" : "text-primary/60 italic"
-                  )}>
-                    {conv.last_message || 'Start syncing...'}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex justify-between items-baseline mb-1">
+                      <span className={cn(
+                        "text-sm font-semibold truncate transition-colors",
+                        isActive ? "text-primary" : "text-on-surface group-hover:text-primary"
+                      )}>
+                        {conv.other_user?.full_name}
+                      </span>
+                      <span className="text-[9px] font-medium text-on-surface-variant/40">2m</span>
+                    </div>
+                    <p className={cn(
+                      "text-xs truncate font-medium",
+                      isActive ? "text-on-surface" : "text-on-surface-variant/70",
+                      !conv.last_message && "italic text-primary/60"
+                    )}>
+                      {conv.last_message || 'Start conversation...'}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )) : (
-              <div className="py-10 text-center text-on-surface-variant opacity-40 flex flex-col items-center gap-4">
+              );
+            }) : (
+              <div className="py-16 text-center text-on-surface-variant opacity-40 flex flex-col items-center gap-4">
                 <MessageCircle size={32} />
                 <span className="text-[10px] font-black uppercase tracking-widest">No Inbox Activity</span>
               </div>
