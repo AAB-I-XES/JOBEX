@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { chatService } from '../features/chat/chatService';
 import { useUserStore } from '../store/useUserStore';
 import type { Message, Conversation } from '../types/chat';
-import { Send, Phone, Video, CheckCheck, MessageCircle, ArrowLeft, MoreHorizontal, Paperclip } from 'lucide-react';
+import { Send, Phone, Video, CheckCheck, MessageCircle, ArrowLeft, MoreHorizontal, Paperclip, Search, X } from 'lucide-react';
 import { cn } from '../utils/helpers';
 import Button from '../components/ui/Button';
 import { supabase } from '../lib/supabaseClient';
@@ -24,7 +24,13 @@ const Messages: React.FC = () => {
   const [isIncoming, setIsIncoming] = useState(false);
   const [signalQueue, setSignalQueue] = useState<any[]>([]);
   const [incomingOffer, setIncomingOffer] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const filteredConversations = conversations.filter(conv => 
+    conv.other_user?.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    conv.last_message?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -193,8 +199,8 @@ const Messages: React.FC = () => {
       )}>
         <div className="flex flex-col h-full overflow-hidden">
           {/* Header */}
-          <div className="p-6 pb-4 shrink-0 border-b border-white/5">
-            <div className="flex justify-between items-center mb-6">
+          <div className="p-6 pb-4 shrink-0 border-b border-white/5 flex flex-col gap-4">
+            <div className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <button 
                   onClick={() => navigate(-1)}
@@ -208,13 +214,35 @@ const Messages: React.FC = () => {
                  <MoreHorizontal size={18} className="text-on-surface-variant" />
               </div>
             </div>
+
+            {/* Search Bar */}
+            <div className="relative">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/40" />
+              <input
+                type="text"
+                placeholder="Search chats..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full bg-surface-container-high/40 border border-white/5 rounded-xl py-2 pl-9 pr-8 text-xs font-medium placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary/30 transition-colors text-on-surface"
+              />
+              {searchQuery && (
+                <button 
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-full hover:bg-white/10 text-on-surface-variant/60 hover:text-white transition-colors"
+                >
+                  <X size={12} />
+                </button>
+              )}
+            </div>
             
-            <span className="text-[10px] font-bold uppercase text-primary/80 tracking-[0.15em] block">ACTIVE CHATS</span>
+            <span className="text-[10px] font-bold uppercase text-primary/80 tracking-[0.15em] block">
+              {searchQuery ? 'Search Results' : 'ACTIVE CHATS'}
+            </span>
           </div>
           
           {/* Scrollable Chat List */}
           <div className="flex-1 overflow-y-auto divide-y divide-white/5">
-            {conversations.length > 0 ? conversations.map((conv) => {
+            {filteredConversations.length > 0 ? filteredConversations.map((conv) => {
               const isActive = activeConv?.id === conv.id;
               return (
                 <div 
@@ -258,7 +286,9 @@ const Messages: React.FC = () => {
             }) : (
               <div className="py-16 text-center text-on-surface-variant opacity-40 flex flex-col items-center gap-4">
                 <MessageCircle size={32} />
-                <span className="text-[10px] font-black uppercase tracking-widest">No Inbox Activity</span>
+                <span className="text-[10px] font-bold uppercase tracking-widest">
+                  {searchQuery ? 'No results found' : 'No Inbox Activity'}
+                </span>
               </div>
             )}
           </div>
