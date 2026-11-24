@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { toast } from 'react-hot-toast';
 import { useUserStore } from '../../store/useUserStore';
 import type { User } from '../../types/user';
 
@@ -25,6 +26,18 @@ export const useAuth = () => {
   const isInitialCheckDone = useRef(false);
 
   useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    const callbackError =
+      queryParams.get('error_description') ??
+      hashParams.get('error_description') ??
+      queryParams.get('error') ??
+      hashParams.get('error');
+    if (callbackError) {
+      console.error('[Auth] OAuth callback failed:', callbackError);
+      toast.error(callbackError);
+    }
+
     const hasSupabaseConfig = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
     if (!hasSupabaseConfig) {
       setUser(null);
@@ -43,7 +56,11 @@ export const useAuth = () => {
         setLoading(true);
 
         // 1) Restore quickly from local persisted session.
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) {
+          console.error('[Auth] Session restore failed:', sessionError);
+          toast.error(sessionError.message);
+        }
         if (!session?.user) {
           console.log('[Auth] Initial sync: Guest mode');
           setUser(null);
