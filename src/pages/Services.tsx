@@ -42,14 +42,14 @@ const Services: React.FC = () => {
   ), [activeType, query, selectedCategory]);
 
   return (
-    <div className="mx-auto min-h-screen max-w-md bg-background px-5 pb-28 pt-4 text-on-surface">
-      <div className="mb-5">
+    <div className="mx-auto min-h-screen max-w-md bg-background px-5 pb-28 pt-4 text-on-surface lg:max-w-7xl lg:px-8 lg:pb-12 lg:pt-8">
+      <div className="mb-5 lg:mb-8">
         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Camport</p>
-        <h1 className="mt-1 text-3xl font-black tracking-tight text-white">Services</h1>
-        <p className="mt-1 text-xs text-on-surface-variant">Choose what you need today.</p>
+        <h1 className="mt-1 text-3xl font-black tracking-tight text-white lg:text-4xl">Services</h1>
+        <p className="mt-1 text-xs text-on-surface-variant lg:text-sm">Choose what you need today.</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4 lg:gap-4">
         {categories.map((category) => {
           const service = services.find((item) => item.id === category.serviceId);
           const Icon = category.icon;
@@ -59,7 +59,7 @@ const Services: React.FC = () => {
               type="button"
               key={category.id}
               onClick={() => selectCategory(category)}
-              className={`group relative h-[112px] overflow-hidden rounded-[19px] border text-left text-white transition active:scale-[0.98] ${isSelected ? 'border-primary shadow-[0_0_0_2px_rgba(247,168,115,0.3)]' : 'border-white/5'}`}
+              className={`group relative h-[112px] overflow-hidden rounded-[19px] border text-left text-white transition active:scale-[0.98] lg:h-44 lg:rounded-3xl ${isSelected ? 'border-primary shadow-[0_0_0_2px_rgba(247,168,115,0.3)]' : 'border-white/5'}`}
             >
               {service && <img src={service.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-75 transition duration-500 group-hover:scale-105" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-black/20" />

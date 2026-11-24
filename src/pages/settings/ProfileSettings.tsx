@@ -16,30 +16,40 @@ const ProfileSettings: React.FC = () => {
   const [saving, setSaving]           = useState(false);
   const [saved, setSaved]             = useState(false);
   const [error, setError]             = useState<string | null>(null);
+  const isInitialSetup = Boolean(user && !user.username && !user.title);
 
   useEffect(() => {
     if (user) {
-      setDisplayName(user.display_name ?? user.full_name ?? '');
+      setDisplayName(user.full_name ?? user.display_name ?? '');
       setUsername(user.username ?? '');
       setTitle(user.title ?? '');
     }
   }, [user]);
 
   const handleSave = async () => {
-    if (!user) return;
     setError(null);
+    if (!user) {
+      setError('You must be signed in to save your profile.');
+      return;
+    }
+
     setSaving(true);
+    const shouldContinueToApp = !user.username && !user.title;
     try {
       const updated = await profileService.updateProfile(user.id, {
-        display_name: displayName.trim() || undefined,
+        full_name:    displayName.trim() || undefined,
         username:     username.trim()     || undefined,
         title:        title.trim()        || undefined,
       });
       setUser({ ...user, ...updated });
+      if (shouldContinueToApp) {
+        navigate('/', { replace: true });
+        return;
+      }
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
-    } catch (e: any) {
-      setError(e?.message ?? 'Failed to save changes.');
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'Failed to save changes.');
     } finally {
       setSaving(false);
     }
@@ -161,7 +171,7 @@ const ProfileSettings: React.FC = () => {
                 <CheckCircle2 size={16} className="text-green-400" /> Saved!
               </span>
             ) : (
-              'Save Changes'
+              isInitialSetup ? 'Confirm & Continue' : 'Save Changes'
             )}
           </Button>
         </div>

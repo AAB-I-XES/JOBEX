@@ -37,8 +37,8 @@ const Profile: React.FC = () => {
   ];
 
   return (
-    <div className="mx-auto min-h-screen max-w-md bg-background pb-28 text-on-surface">
-      <header className="rounded-b-[30px] bg-[#f7ad7c] px-5 pb-5 pt-5 text-[#191715]">
+    <div className="mx-auto min-h-screen max-w-md bg-background pb-28 text-on-surface lg:grid lg:max-w-7xl lg:grid-cols-[minmax(280px,0.8fr)_minmax(0,1.2fr)] lg:items-start lg:gap-8 lg:px-8 lg:pb-12 lg:pt-8">
+      <header className="rounded-b-[30px] bg-[#f7ad7c] px-5 pb-5 pt-5 text-[#191715] lg:rounded-[30px] lg:px-8 lg:py-8">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-bold text-black/60">Hi there 👋</p>
@@ -59,7 +59,7 @@ const Profile: React.FC = () => {
         </div>
       </header>
 
-      <section className="px-5 pt-3">
+      <section className="px-5 pt-3 lg:px-0 lg:pt-0 lg:row-span-2">
         {menuItems.map(({ label, icon: Icon, onClick, detail }) => (
           <button key={label} onClick={onClick} className="flex w-full items-center gap-3 border-b border-white/10 py-4 text-left">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-white/65"><Icon size={16} /></span>
@@ -72,7 +72,7 @@ const Profile: React.FC = () => {
         ))}
       </section>
 
-      <footer className="px-5 pt-8">
+      <footer className="px-5 pt-8 lg:px-5 lg:pt-4">
         {user ? (
           <Button onClick={handleSignOut} variant="ghost" className="h-11 w-full gap-2 rounded-xl border border-white/10 text-white/60">
             <LogOut size={15} /> Sign out

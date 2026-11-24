@@ -28,7 +28,7 @@ const MainLayout: React.FC = () => {
       {!hideNavbar && <Navbar />}
       
       <main className={cn(
-        "min-h-screen w-full relative z-10 px-0 sm:px-4",
+        "relative z-10 min-h-screen w-full px-0 sm:px-4 lg:pl-64",
         !hideNavbar && "pt-16"
       )}>
         <Outlet />

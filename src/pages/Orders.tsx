@@ -17,8 +17,8 @@ const Orders: React.FC = () => {
   const latestBooking = bookings[0];
 
   return (
-    <div className="mx-auto min-h-screen max-w-md bg-background pb-28 text-on-surface">
-      <header className="rounded-b-[30px] bg-[#f7ad7c] px-5 pb-5 pt-5 text-[#191715]">
+    <div className="mx-auto min-h-screen max-w-md bg-background pb-28 text-on-surface lg:grid lg:max-w-7xl lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:items-start lg:gap-8 lg:px-8 lg:pb-12 lg:pt-8">
+      <header className="rounded-b-[30px] bg-[#f7ad7c] px-5 pb-5 pt-5 text-[#191715] lg:rounded-[30px] lg:px-8 lg:py-8">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-black tracking-tight">Activity <span aria-hidden="true">◷</span></h1>
@@ -29,7 +29,7 @@ const Orders: React.FC = () => {
           </button>
         </div>
 
-        <button onClick={() => navigate('/services?type=ride')} className="relative mt-5 block h-40 w-full overflow-hidden rounded-[22px] bg-[#242423] text-left text-white">
+        <button onClick={() => navigate('/services?type=ride')} className="relative mt-5 block h-40 w-full overflow-hidden rounded-[22px] bg-[#242423] text-left text-white lg:mt-8 lg:h-64">
           <div
             aria-hidden="true"
             className="absolute inset-0 opacity-60"
@@ -55,7 +55,7 @@ const Orders: React.FC = () => {
         </button>
       </header>
 
-      <section className="px-5 pt-5">
+      <section className="px-5 pt-5 lg:px-0 lg:pt-2">
         <div className="mb-1 flex items-center justify-between px-1">
           <h2 className="text-xs font-black uppercase tracking-[0.16em] text-white/50">Recent</h2>
           {bookings.length > 0 && <span className="text-[11px] text-white/40">{bookings.length} total</span>}
