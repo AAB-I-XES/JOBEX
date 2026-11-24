@@ -1,81 +1,65 @@
-import React from 'react';
-import { Search, TrendingUp, Sparkles, Zap, Camera, Music, Palette } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-
-const categories = [
-  { name: 'Video Edit', icon: Zap, color: 'bg-orange-500' },
-  { name: 'UI Design', icon: Palette, color: 'bg-blue-500' },
-  { name: 'VFX Flow', icon: Sparkles, color: 'bg-purple-500' },
-  { name: 'Photography', icon: Camera, color: 'bg-pink-500' },
-  { name: 'Music Production', icon: Music, color: 'bg-green-500' },
-  { name: 'Marketing', icon: TrendingUp, color: 'bg-cyan-500' },
-];
+import React, { useMemo, useState } from 'react';
+import { Bike, Search, Sandwich } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import BookingDialog from '../components/booking/BookingDialog';
+import ServiceCard from '../components/booking/ServiceCard';
+import { services } from '../data/marketplace';
+import type { MarketplaceService, ServiceType } from '../types/booking';
 
 const Explore: React.FC = () => {
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeType: ServiceType = searchParams.get('type') === 'snack' ? 'snack' : 'ride';
+  const [query, setQuery] = useState('');
+  const [selectedService, setSelectedService] = useState<MarketplaceService | null>(null);
+  const results = useMemo(() => services.filter((service) =>
+    service.type === activeType &&
+    `${service.name} ${service.description} ${service.category}`.toLowerCase().includes(query.trim().toLowerCase())
+  ), [activeType, query]);
 
   return (
-    <div className="pt-4 pb-32 px-6 max-w-2xl mx-auto min-h-screen">
-      <h1 className="text-4xl font-extrabold tracking-tight text-white mb-6 animate-ios">Explore</h1>
-
-      {/* iOS Search Bar */}
-      <div className="relative mb-10">
-        <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-on-surface-variant">
-          <Search size={18} strokeWidth={2.5} />
-        </div>
-        <input 
-          type="text" 
-          placeholder="Skills, creators or projects"
-          className="w-full h-12 bg-surface rounded-2xl pl-12 pr-4 text-sm font-medium border border-white/5 focus:ring-2 focus:ring-primary/20 outline-none ios-transition"
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              navigate(`/search?q=${encodeURIComponent((e.target as HTMLInputElement).value)}`);
-            }
-          }}
-        />
+    <div className="mx-auto min-h-screen max-w-5xl px-5 pb-32 pt-5 sm:px-8">
+      <div className="mb-7">
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Around you</p>
+        <h1 className="mt-2 text-4xl font-black tracking-tighter text-white">
+          Find {activeType === 'ride' ? 'a ride' : 'a good bite'}
+        </h1>
+        <p className="mt-2 text-sm text-on-surface-variant">Local rides and fresh snacks, all in one place.</p>
       </div>
 
-      <section className="space-y-8 animate-ios" style={{ animationDelay: '0.1s' }}>
-        <h2 className="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40">Categories</h2>
-        <div className="grid grid-cols-2 gap-4">
-          {categories.map((cat) => (
-            <button 
-              key={cat.name}
-              onClick={() => navigate(`/explore/${encodeURIComponent(cat.name)}`)}
-              className="ios-card p-5 flex flex-col items-start gap-4 active:scale-95 ios-transition group"
-            >
-              <div className={`${cat.color} w-10 h-10 rounded-xl flex items-center justify-center text-white shadow-lg`}>
-                <cat.icon size={20} />
-              </div>
-              <span className="text-sm font-bold tracking-tight group-hover:text-primary transition-colors">{cat.name}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      <div className="mb-5 inline-flex rounded-2xl border border-white/5 bg-white/5 p-1">
+        {([
+          { type: 'ride' as const, label: 'Rides', icon: Bike },
+          { type: 'snack' as const, label: 'Snacks', icon: Sandwich },
+        ]).map(({ type, label, icon: Icon }) => (
+          <button key={type} onClick={() => setSearchParams({ type })} className={`flex items-center gap-2 rounded-xl px-5 py-3 text-xs font-black transition ${activeType === type ? 'bg-primary text-white' : 'text-on-surface-variant hover:text-white'}`}>
+            <Icon size={15} /> {label}
+          </button>
+        ))}
+      </div>
 
-      <section className="mt-12 space-y-6 animate-ios" style={{ animationDelay: '0.2s' }}>
-        <div className="flex justify-between items-center">
-           <h2 className="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant opacity-40">Trending Now</h2>
-           <button className="text-primary text-xs font-bold active:opacity-50">See All</button>
+      <label className="mb-7 flex h-12 items-center gap-3 rounded-2xl border border-white/5 bg-surface px-4 text-on-surface-variant">
+        <Search size={17} />
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={activeType === 'ride' ? 'Search cycle or e-rickshaw rides' : 'Search chai, snacks and more'} className="w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-500" />
+      </label>
+
+      <div className="mb-4 flex items-center justify-between">
+        <h2 className="text-xs font-black uppercase tracking-[0.18em] text-on-surface-variant">{activeType === 'ride' ? 'Nearby rides' : 'Nearby snacks'}</h2>
+        <span className="text-xs text-on-surface-variant">{results.length} options</span>
+      </div>
+      {results.length ? (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {results.map((service) => <ServiceCard key={service.id} service={service} onSelect={setSelectedService} />)}
         </div>
-        <div className="space-y-4">
-           {[1, 2, 3, 4, 5, 6].map(i => (
-             <div key={i} className="flex items-center gap-4 bg-surface/50 p-4 rounded-2xl border border-white/5 active:bg-white/5 ios-transition">
-                <div className="w-16 h-16 rounded-xl bg-zinc-800 animate-pulse overflow-hidden">
-                   <img src={`https://picsum.photos/seed/trend-${i}/100/100`} alt="" className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1">
-                   <p className="text-sm font-bold tracking-tight">CGI Product Visualizer</p>
-                   <p className="text-xs text-on-surface-variant font-medium mt-1">@studio_elite</p>
-                </div>
-                <div className="text-right">
-                   <p className="text-sm font-black italic">₹{1200 * i}</p>
-                   <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest mt-1">Global</p>
-                </div>
-             </div>
-           ))}
+      ) : (
+        <div className="ios-card px-6 py-12 text-center">
+          <p className="font-bold text-white">Nothing found yet</p>
+          <p className="mt-2 text-sm text-on-surface-variant">Try another search to see what’s nearby.</p>
         </div>
-      </section>
+      )}
+
+      {selectedService && (
+        <BookingDialog service={selectedService} onClose={() => setSelectedService(null)} onBooked={() => setSelectedService(null)} />
+      )}
     </div>
   );
 };

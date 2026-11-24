@@ -1,10 +1,9 @@
 import { useEffect, useRef } from 'react';
-import { supabase } from '../../lib/supabaseClient';
-import { authService } from '../../features/auth/authService';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { useUserStore } from '../../store/useUserStore';
 import type { User } from '../../types/user';
 
-const mapSessionUserToUser = (authUser: any): User => ({
+const mapSessionUserToUser = (authUser: SupabaseUser): User => ({
   id: authUser.id,
   email: authUser.email ?? '',
   full_name: authUser.user_metadata?.full_name || authUser.email?.split('@')[0] || 'Member',
@@ -26,14 +25,23 @@ export const useAuth = () => {
   const isInitialCheckDone = useRef(false);
 
   useEffect(() => {
-    // 1. Initial Session Sync
-    const initAuth = async () => {
+    const hasSupabaseConfig = Boolean(import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY);
+    if (!hasSupabaseConfig) {
+      setUser(null);
+      setLoading(false);
+      isInitialCheckDone.current = true;
+      return;
+    }
+
+    let cancelled = false;
+    let unsubscribe: (() => void) | undefined;
+
+    const initAuth = async (supabase: typeof import('../../lib/supabaseClient').supabase, authService: typeof import('../../features/auth/authService').authService) => {
       if (isInitialCheckDone.current) return;
-      
-      console.log('[Auth] Running initial session sync...');
-      setLoading(true);
-      
       try {
+        console.log('[Auth] Running initial session sync...');
+        setLoading(true);
+
         // 1) Restore quickly from local persisted session.
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.user) {
@@ -68,42 +76,60 @@ export const useAuth = () => {
       }
     };
 
-    initAuth();
-
-    // 2. Listen for Auth State Changes (Critical for OAuth Redirects)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('[Auth] State Change Detected:', event);
-      
+    const initialize = async () => {
       try {
-        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
-          if (session?.user) {
-            const fallbackUser = mapSessionUserToUser(session.user);
-            setUser(fallbackUser);
-            if (event === 'SIGNED_IN') {
-              try {
-                const currentUser = await withTimeout(authService.getCurrentUser(), 8000);
-                if (currentUser) setUser(currentUser);
-              } catch {
-                // Keep the session user and skip noisy timeout logs on transient network issues.
+        const [{ supabase }, { authService }] = await Promise.all([
+          import('../../lib/supabaseClient'),
+          import('../../features/auth/authService'),
+        ]);
+        if (cancelled) return;
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log('[Auth] State Change Detected:', event);
+
+          try {
+            if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+              if (session?.user) {
+                const fallbackUser = mapSessionUserToUser(session.user);
+                setUser(fallbackUser);
+                if (event === 'SIGNED_IN') {
+                  try {
+                    const currentUser = await withTimeout(authService.getCurrentUser(), 8000);
+                    if (currentUser) setUser(currentUser);
+                  } catch {
+                    // Keep the session user and skip noisy timeout logs on transient network issues.
+                  }
+                }
+              } else {
+                setUser(null);
               }
+            } else if (event === 'SIGNED_OUT') {
+              setUser(null);
             }
-          } else {
-            setUser(null);
+          } finally {
+            setLoading(false);
           }
-        } else if (event === 'SIGNED_OUT') {
-          setUser(null);
-        }
-      } finally {
+        });
+        unsubscribe = () => subscription.unsubscribe();
+        await initAuth(supabase, authService);
+      } catch (error) {
+        console.error('[Auth] Initialization failed:', error);
+        setUser(null);
         setLoading(false);
+        isInitialCheckDone.current = true;
       }
-    });
+    };
+
+    void initialize();
 
     return () => {
-      subscription.unsubscribe();
+      cancelled = true;
+      unsubscribe?.();
     };
   }, [setUser, setLoading]);
 
   const signOut = async (): Promise<void> => {
+    const { authService } = await import('../../features/auth/authService');
     await authService.signOut();
     setUser(null);
   };

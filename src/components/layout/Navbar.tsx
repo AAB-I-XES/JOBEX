@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, User, Settings, LogOut } from 'lucide-react';
+import { Search, User, Settings, LogOut, LogIn } from 'lucide-react';
 import { useUserStore } from '../../store/useUserStore';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/helpers';
 import { AnimatePresence, motion } from 'framer-motion';
-import { authService } from '../../features/auth/authService';
+import { toast } from 'react-hot-toast';
 
 const Navbar: React.FC = () => {
   const { user, setUser } = useUserStore();
@@ -20,10 +20,16 @@ const Navbar: React.FC = () => {
   }, []);
 
   const handleSignOut = async () => {
-    await authService.signOut();
-    setUser(null);
-    setShowDropdown(false);
-    navigate('/');
+    try {
+      const { authService } = await import('../../features/auth/authService');
+      await authService.signOut();
+      setUser(null);
+      setShowDropdown(false);
+      navigate('/');
+    } catch (error) {
+      console.error('Unable to sign out:', error);
+      toast.error('Unable to sign out. Please try again.');
+    }
   };
 
   const isFeed = location.pathname === '/';
@@ -51,13 +57,13 @@ const Navbar: React.FC = () => {
         {/* Center Section: Contextual Title (Typically iOS style) */}
         {!isScrolled && isFeed && (
            <div className="absolute left-1/2 -translate-x-1/2">
-             <span className="text-xs font-black tracking-[0.3em] uppercase opacity-40">jobex</span>
+             <span className="text-xs font-black tracking-[0.3em] uppercase opacity-50">Local rides & bites</span>
            </div>
         )}
 
         {/* Right Section: Actions */}
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/explore')} className="p-2 text-on-surface-variant hover:text-white transition-colors">
+          <button onClick={() => navigate('/explore?type=ride')} aria-label="Find a ride" className="p-2 text-on-surface-variant hover:text-white transition-colors">
             <Search size={20} />
           </button>
           
@@ -85,10 +91,17 @@ const Navbar: React.FC = () => {
                     <span className="text-sm font-semibold">Settings</span>
                     <Settings size={16} />
                   </button>
-                  <button onClick={handleSignOut} className="w-full ios-list-item px-4 border-0 text-error">
-                    <span className="text-sm font-semibold">Log Out</span>
-                    <LogOut size={16} />
-                  </button>
+                  {user ? (
+                    <button onClick={handleSignOut} className="w-full ios-list-item px-4 border-0 text-error">
+                      <span className="text-sm font-semibold">Log Out</span>
+                      <LogOut size={16} />
+                    </button>
+                  ) : (
+                    <button onClick={() => { navigate('/login'); setShowDropdown(false); }} className="w-full ios-list-item px-4 border-0">
+                      <span className="text-sm font-semibold">Sign In</span>
+                      <LogIn size={16} />
+                    </button>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>

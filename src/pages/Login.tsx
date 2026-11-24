@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Mail, ArrowRight, Globe, ShieldCheck, Sparkles } from 'lucide-react';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
-import { authService } from '../features/auth/authService';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -19,9 +18,14 @@ const Login: React.FC = () => {
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) return toast.error('Please enter your email');
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      toast.error('Sign in is unavailable until the authentication service is configured.');
+      return;
+    }
     
     setIsLoading(true);
     try {
+      const { authService } = await import('../features/auth/authService');
       if (authMethod === 'magic') {
           await authService.signInWithMagicLink(email);
           toast.success('Magic link sent! Check your inbox.');
@@ -39,17 +43,22 @@ const Login: React.FC = () => {
               toast.success('Welcome back!');
           }
       }
-    } catch (err: any) {
-      toast.error(err.message || 'Authentication failed');
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Authentication failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleLogin = async () => {
+    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
+      toast.error('Sign in is unavailable until the authentication service is configured.');
+      return;
+    }
     try {
+      const { authService } = await import('../features/auth/authService');
       await authService.signInWithGoogle();
-    } catch (err: any) {
+    } catch {
       toast.error('Google login failed');
     }
   };
@@ -91,10 +100,10 @@ const Login: React.FC = () => {
           <div className="text-center mb-10">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6 group">
                <Sparkles size={14} className="text-primary group-hover:rotate-12 transition-transform" />
-               <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Join the Elite</span>
+               <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em]">Get moving, get a bite</span>
             </div>
             <h1 className="text-6xl font-black tracking-tighter text-white mb-2 italic">jobex</h1>
-            <p className="text-on-surface-variant font-bold text-xs uppercase tracking-widest opacity-60">Future of Work, Today</p>
+            <p className="text-on-surface-variant font-bold text-xs uppercase tracking-widest opacity-60">Local rides. Good food. One tap.</p>
           </div>
 
           <div className="relative group">

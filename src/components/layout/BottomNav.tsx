@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Search, PlusSquare, MessageCircle, User } from 'lucide-react';
+import { Bike, ClipboardList, Home, Sandwich, User } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { cn } from '../../utils/helpers';
 
@@ -9,20 +9,25 @@ const BottomNav: React.FC = () => {
 
   const tabs = [
     { label: 'Home', icon: Home, path: '/' },
-    { label: 'Explore', icon: Search, path: '/explore' },
-    { label: 'Create', icon: PlusSquare, path: '/upload' },
-    { label: 'Chat', icon: MessageCircle, path: '/messages' },
+    { label: 'Rides', icon: Bike, path: '/explore?type=ride' },
+    { label: 'Snacks', icon: Sandwich, path: '/explore?type=snack' },
+    { label: 'Orders', icon: ClipboardList, path: '/orders' },
     { label: 'Profile', icon: User, path: '/profile' },
   ];
 
   return (
     <nav className="fixed bottom-0 left-0 w-full ios-glass border-t border-white/5 pb-safe z-[100]">
-      <div className="max-w-md mx-auto h-20 px-6 flex justify-between items-center">
+      <div className="max-w-lg mx-auto h-20 px-4 sm:px-6 flex justify-between items-center">
         {tabs.map((tab) => {
-          const isActive = location.pathname === tab.path || (tab.path !== '/' && location.pathname.startsWith(tab.path));
+          const isExplore = location.pathname === '/explore';
+          const isActive = tab.path === '/'
+            ? location.pathname === '/'
+            : tab.path.startsWith('/explore?')
+              ? isExplore && location.search.includes(`type=${tab.path.split('type=')[1]}`)
+              : location.pathname === tab.path || location.pathname.startsWith(`${tab.path}/`);
           return (
             <button
-              key={tab.path}
+              key={tab.label}
               onClick={() => navigate(tab.path)}
               className={cn(
                 "flex flex-col items-center justify-center gap-1 transition-all duration-300 relative",

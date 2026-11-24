@@ -10,9 +10,9 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({ 
-  title = "jobex | The Next-Gen Freelance Marketplace", 
-  description = "Connect with elite talent and find premium gig opportunities on jobex.",
-  keywords = "freelance, gig economy, vertical video, tiktok economy, creators, motion design",
+  title = "jobex | Local Rides & Snacks",
+  description = "Book a neighborhood cycle or e-rickshaw and order fresh snacks nearby with jobex.",
+  keywords = "cycle rickshaw, e-rickshaw, local rides, snacks, neighborhood delivery",
   image = "/og-image.jpg",
   url = window.location.href
 }) => {

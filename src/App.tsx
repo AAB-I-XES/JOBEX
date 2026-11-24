@@ -8,6 +8,7 @@ import { ErrorBoundary } from './components/common/ErrorBoundary';
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
 const Explore = lazy(() => import('./pages/Explore'));
+const Orders = lazy(() => import('./pages/Orders'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Messages = lazy(() => import('./pages/Messages'));
 const Profile = lazy(() => import('./pages/Profile'));
@@ -79,6 +80,7 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<Home />} />
           <Route path="explore" element={<Explore />} />
+          <Route path="orders" element={<Orders />} />
           <Route path="explore/:categoryName" element={<CategoryResults />} />
           <Route path="search" element={<SearchResults />} />
           <Route path="gig/:id" element={<GigDetails />} />
