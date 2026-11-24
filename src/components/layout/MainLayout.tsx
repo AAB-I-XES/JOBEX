@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Navbar from './Navbar';
 import BottomNav from './BottomNav';
@@ -14,6 +15,10 @@ const MainLayout: React.FC = () => {
 
   const hideNavbar = isPrimaryScreen || isImmersiveView || isStoryView || isMessageView;
   const hideBottomNav = isImmersiveView || isStoryView || isGigDetails || isMessageView;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className="relative min-h-screen bg-background text-on-surface font-body selection:bg-primary/30">

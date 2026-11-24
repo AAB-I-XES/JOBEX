@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Bike, PackageCheck, Search, Sandwich } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import BookingDialog from '../components/booking/BookingDialog';
 import ServiceCard from '../components/booking/ServiceCard';
 import { services } from '../data/marketplace';
@@ -14,6 +14,7 @@ const categories = [
 ];
 
 const Services: React.FC = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedCategory = categories.find((category) => category.id === searchParams.get('category'));
   const requestedType = searchParams.get('type');
@@ -106,7 +107,12 @@ const Services: React.FC = () => {
       )}
 
       {selectedService && (
-        <BookingDialog service={selectedService} defaultDestination={defaultDestination} onClose={() => setSelectedService(null)} onBooked={() => setSelectedService(null)} />
+        <BookingDialog
+          service={selectedService}
+          defaultDestination={defaultDestination}
+          onClose={() => setSelectedService(null)}
+          onBooked={() => navigate('/orders')}
+        />
       )}
     </div>
   );
