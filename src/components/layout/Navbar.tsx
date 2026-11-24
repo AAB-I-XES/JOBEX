@@ -49,7 +49,7 @@ const Navbar: React.FC = () => {
              </button>
            ) : (
              <h1 className={cn("font-black tracking-tighter text-xl transition-all", isScrolled ? "text-white" : "text-white invisible opacity-0")}>
-               jobex
+               camport
              </h1>
            )}
         </div>
@@ -57,13 +57,13 @@ const Navbar: React.FC = () => {
         {/* Center Section: Contextual Title (Typically iOS style) */}
         {!isScrolled && isFeed && (
            <div className="absolute left-1/2 -translate-x-1/2">
-             <span className="text-xs font-black tracking-[0.3em] uppercase opacity-50">Local rides & bites</span>
+             <span className="text-xs font-black tracking-[0.3em] uppercase opacity-50">Camport</span>
            </div>
         )}
 
         {/* Right Section: Actions */}
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate('/explore?type=ride')} aria-label="Find a ride" className="p-2 text-on-surface-variant hover:text-white transition-colors">
+          <button onClick={() => navigate('/services?type=ride')} aria-label="Find a ride" className="p-2 text-on-surface-variant hover:text-white transition-colors">
             <Search size={20} />
           </button>
           

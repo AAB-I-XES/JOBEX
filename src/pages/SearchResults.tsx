@@ -60,7 +60,7 @@ const SearchResults: React.FC = () => {
             type="text" 
             value={query}
             onChange={(e) => setSearchParams({ q: e.target.value })}
-            placeholder="Search jobex..."
+            placeholder="Search Camport..."
             className="w-full h-10 bg-surface rounded-xl pl-12 pr-4 text-sm font-medium border border-white/5 focus:ring-2 focus:ring-primary/20 outline-none ios-transition"
           />
         </div>

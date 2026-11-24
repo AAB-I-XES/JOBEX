@@ -7,13 +7,14 @@ import { saveBooking } from '../../utils/bookings';
 
 interface BookingDialogProps {
   service: MarketplaceService;
+  defaultDestination?: string;
   onClose: () => void;
   onBooked: () => void;
 }
 
-const BookingDialog: React.FC<BookingDialogProps> = ({ service, onClose, onBooked }) => {
+const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestination = '', onClose, onBooked }) => {
   const [pickup, setPickup] = useState('');
-  const [destination, setDestination] = useState('');
+  const [destination, setDestination] = useState(defaultDestination);
   const [quantity, setQuantity] = useState(1);
   const [fulfillment, setFulfillment] = useState<'delivery' | 'pickup'>('delivery');
   const isRide = service.type === 'ride';

@@ -14,57 +14,94 @@ const Orders: React.FC = () => {
     }
   });
   const navigate = useNavigate();
+  const latestBooking = bookings[0];
 
   return (
-    <div className="mx-auto min-h-screen max-w-3xl px-5 pb-32 pt-5 sm:px-8">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Your activity</p>
-      <h1 className="mt-2 text-4xl font-black tracking-tighter text-white">Orders</h1>
-      <p className="mt-2 text-sm text-on-surface-variant">Keep track of your ride requests and snack orders.</p>
-
-      {loadError ? (
-        <div role="alert" className="ios-card mt-8 px-6 py-8 text-center text-sm text-error">{loadError}</div>
-      ) : bookings.length ? (
-        <div className="mt-7 space-y-3">
-          {bookings.map((booking) => {
-            const Icon = booking.type === 'ride' ? Bike : Sandwich;
-            return (
-              <article key={booking.id} className="ios-card flex items-start gap-4 p-5">
-                <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ${booking.type === 'ride' ? 'bg-primary/15 text-primary' : 'bg-warning/15 text-warning'}`}>
-                  <Icon size={22} />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <h2 className="font-black text-white">{booking.serviceName}</h2>
-                      <p className="mt-1 text-[10px] font-bold uppercase tracking-widest text-primary">
-                        {booking.type === 'ride' ? 'Ride request' : `${booking.fulfillment} order`} · {booking.status}
-                      </p>
-                    </div>
-                    <p className="text-lg font-black text-white">₹{booking.amount}</p>
-                  </div>
-                  <div className="mt-4 space-y-2 text-xs text-on-surface-variant">
-                    {booking.pickup && <p className="flex items-center gap-2"><MapPin size={13} /> {booking.pickup}{booking.destination ? ` → ${booking.destination}` : ''}</p>}
-                    {booking.type === 'snack' && <p>{booking.quantity} item{booking.quantity === 1 ? '' : 's'}</p>}
-                    <p className="flex items-center gap-2"><Clock3 size={13} /> {new Date(booking.createdAt).toLocaleString()}</p>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="ios-card mt-8 flex flex-col items-center px-6 py-12 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary"><Bike size={28} /></div>
-          <h2 className="text-lg font-black text-white">Nothing booked yet</h2>
-          <p className="mt-2 max-w-xs text-sm leading-6 text-on-surface-variant">Your ride requests and snack orders will show up here.</p>
-          <button onClick={() => navigate('/')} className="mt-6 flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-xs font-black text-white">
-            Explore nearby <ArrowRight size={14} />
+    <div className="mx-auto min-h-screen max-w-md bg-background pb-28 text-on-surface">
+      <header className="rounded-b-[30px] bg-[#f7ad7c] px-5 pb-5 pt-5 text-[#191715]">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-black tracking-tight">Activity <span aria-hidden="true">◷</span></h1>
+            <p className="mt-1 text-xs font-semibold text-black/55">Past trips & orders</p>
+          </div>
+          <button onClick={() => navigate('/profile')} aria-label="Open profile" className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/40">
+            <span className="text-sm font-black">C</span>
           </button>
         </div>
-      )}
-      <p className="mt-6 text-center text-[10px] leading-4 text-on-surface-variant">
-        Requests are saved on this device for the demo. They are not sent to a driver or store.
-      </p>
+
+        <button onClick={() => navigate('/services?type=ride')} className="relative mt-5 block h-40 w-full overflow-hidden rounded-[22px] bg-[#242423] text-left text-white">
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 opacity-60"
+            style={{
+              backgroundImage: 'linear-gradient(25deg, transparent 44%, #55534e 45%, #55534e 47%, transparent 48%), linear-gradient(145deg, transparent 39%, #393936 40%, #393936 42%, transparent 43%), linear-gradient(90deg, transparent 70%, #4b4a45 71%, #4b4a45 73%, transparent 74%)',
+              backgroundSize: '190px 130px, 220px 140px, 160px 120px',
+              backgroundPosition: 'center',
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/5" />
+          <div className="absolute right-8 top-8 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white shadow-[0_0_0_6px_rgba(247,173,124,0.18)]">
+            <MapPin size={15} fill="currentColor" />
+          </div>
+          <div className="absolute inset-x-4 bottom-4">
+            <p className="text-[10px] font-black uppercase tracking-widest text-white/60">{latestBooking ? 'Latest activity' : 'Your neighborhood'}</p>
+            <p className="mt-1 text-lg font-black">
+              {latestBooking?.destination || latestBooking?.pickup || 'Ready for your next trip?'}
+            </p>
+            <p className="mt-0.5 text-[10px] text-white/60">
+              {latestBooking ? `${latestBooking.serviceName} · ${latestBooking.status}` : 'Book a cycle or e-rickshaw nearby'}
+            </p>
+          </div>
+        </button>
+      </header>
+
+      <section className="px-5 pt-5">
+        <div className="mb-1 flex items-center justify-between px-1">
+          <h2 className="text-xs font-black uppercase tracking-[0.16em] text-white/50">Recent</h2>
+          {bookings.length > 0 && <span className="text-[11px] text-white/40">{bookings.length} total</span>}
+        </div>
+
+        {loadError ? (
+          <div role="alert" className="mt-3 rounded-2xl border border-error/20 bg-error/10 px-4 py-4 text-sm text-error">{loadError}</div>
+        ) : bookings.length ? (
+          <div>
+            {bookings.map((booking) => {
+              const Icon = booking.type === 'ride' ? Bike : Sandwich;
+              const location = booking.destination || booking.pickup || booking.fulfillment;
+              return (
+                <article key={booking.id} className="flex items-center gap-3 border-b border-white/10 py-3.5">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#292928] text-white/80">
+                    <Icon size={20} />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-bold text-white">{location}</p>
+                    <p className="mt-1 truncate text-[10px] font-medium text-white/45">
+                      {booking.serviceName} · {new Date(booking.createdAt).toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-black text-white">₹{booking.amount}</p>
+                    <p className="mt-1 text-[9px] font-bold uppercase tracking-wider text-primary">{booking.status}</p>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="mt-3 rounded-2xl border border-white/5 bg-[#20201f] p-5">
+            <div className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary"><Clock3 size={18} /></span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold text-white">Your activity will show up here</p>
+                <p className="mt-1 text-[11px] text-white/45">Your rides and food orders, all in one place.</p>
+              </div>
+            </div>
+            <button onClick={() => navigate('/')} className="mt-4 flex w-full items-center justify-between rounded-xl bg-white/5 px-4 py-3 text-xs font-bold text-primary">
+              Explore services <ArrowRight size={15} />
+            </button>
+          </div>
+        )}
+      </section>
     </div>
   );
 };

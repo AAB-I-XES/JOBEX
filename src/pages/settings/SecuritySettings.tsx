@@ -57,7 +57,7 @@ const SecuritySettings: React.FC = () => {
 
         <div className="pt-6">
            <p className="text-[10px] text-center text-on-surface-variant font-medium opacity-40 px-10">
-             Your account is protected by jobex Guard. We monitor for suspicious activity and notify you of any new sign-ins.
+             Your account is protected by Camport Guard. We monitor for suspicious activity and notify you of any new sign-ins.
            </p>
         </div>
       </div>

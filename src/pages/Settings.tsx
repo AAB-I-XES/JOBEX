@@ -66,7 +66,7 @@ const Settings: React.FC = () => {
         
         <div className="px-6 space-y-4 animate-ios" style={{ animationDelay: '0.4s' }}>
            <button className="w-full py-4 text-center text-error font-extrabold text-sm tracking-tight active:opacity-50">Reset Application Cache</button>
-           <button className="w-full py-4 text-center text-zinc-600 font-bold text-[10px] uppercase tracking-[0.3em]">jobex Protocol v2.4.1</button>
+           <button className="w-full py-4 text-center text-zinc-600 font-bold text-[10px] uppercase tracking-[0.3em]">Camport v1.0</button>
         </div>
       </div>
     </div>

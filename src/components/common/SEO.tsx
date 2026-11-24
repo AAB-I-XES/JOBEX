@@ -10,8 +10,8 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({ 
-  title = "jobex | Local Rides & Snacks",
-  description = "Book a neighborhood cycle or e-rickshaw and order fresh snacks nearby with jobex.",
+  title = "Camport | Rides, food & deliveries",
+  description = "Book neighborhood rides and order local food with Camport.",
   keywords = "cycle rickshaw, e-rickshaw, local rides, snacks, neighborhood delivery",
   image = "/og-image.jpg",
   url = window.location.href

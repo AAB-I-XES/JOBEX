@@ -12,7 +12,7 @@ const TopAppBar: React.FC = () => {
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi4AWXRxltV56CavqMX_XhkwUAPel9i2W_NKd8KY4DCrLEq__h37CvlHPUppn9uo9CcCXy8bjuoCZ0TO3xoEJkX6UjOcGUy94fI13Rdg4smjMYYhKLDfnHSROwidLxIZisKhQ4C2OxCPOO8fe_eOHqc_XINkStK5JzqIchi_juY-AetfZfiVNfxVbxi2EzrA3_tzsjEB1KoRWwjGIFfYJ5gckYd2CeQJX3H4mZKWSy92fBC1YSL4B-ND5NKIgtCVGIdptbRL2qwU8"
             />
           </div>
-          <span className="text-xl font-bold text-zinc-100 tracking-tighter italic">jobex</span>
+          <span className="text-xl font-bold text-zinc-100 tracking-tighter italic">camport</span>
         </div>
         <div className="flex items-center gap-4">
           <button className="material-symbols-outlined text-blue-200 text-2xl hover:opacity-80 transition-opacity active:scale-90 duration-200">

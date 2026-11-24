@@ -30,7 +30,7 @@ const SupportSettings: React.FC = () => {
             <SupportItem 
               icon={Mail} 
               label="Email Support" 
-              desc="support@jobex.protocol"
+              desc="support@camport.app"
               color="bg-zinc-600"
             />
           </div>

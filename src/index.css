@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  /* iOS Inspired Color Palette */
-  --color-primary: #007AFF; /* iOS Blue */
-  --color-primary-dim: #0056B3;
-  --color-secondary: #5856D6; /* iOS Purple */
-  --color-background: #000000; /* Deep iOS Dark Mode */
-  --color-surface: #1C1C1E; /* iOS System Gray 6 */
-  --color-surface-container: #2C2C2E; /* iOS System Gray 5 */
+  /* Warm rideshare palette */
+  --color-primary: #F7A873;
+  --color-primary-dim: #D98251;
+  --color-secondary: #E8B28D;
+  --color-background: #151514;
+  --color-surface: #222221;
+  --color-surface-container: #2D2D2B;
   --color-on-surface: #FFFFFF;
   --color-on-surface-variant: #8E8E93; /* iOS System Gray */
   --color-error: #FF3B30; /* iOS Red */
   --color-success: #34C759; /* iOS Green */
-  --color-warning: #FF9500; /* iOS Orange */
+  --color-warning: #FFB266;
 
   --font-headline: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
   --font-body: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;

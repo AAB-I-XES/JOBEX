@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Bike, ClipboardList, LogIn, LogOut, Settings, Sandwich } from 'lucide-react';
+import { CarFront, ChevronRight, CircleHelp, Clock3, LogIn, LogOut, MessageCircle, Scale, Settings, Wallet } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/ui/Button';
@@ -21,79 +21,69 @@ const Profile: React.FC = () => {
     }
   };
 
+  const showComingSoon = (feature: string) => toast(`${feature} is coming soon.`);
+
+  const quickActions = [
+    { label: 'Help', icon: CircleHelp, onClick: () => navigate('/settings/support') },
+    { label: 'Wallet', icon: Wallet, onClick: () => showComingSoon('Wallet') },
+    { label: 'Trips', icon: Clock3, onClick: () => navigate('/orders') },
+  ];
+
+  const menuItems = [
+    { label: 'Messages', icon: MessageCircle, onClick: () => user ? navigate('/messages') : navigate('/login'), detail: 'Chat with your driver or store' },
+    { label: 'Settings', icon: Settings, onClick: () => navigate('/settings'), detail: 'Profile and preferences' },
+    { label: 'Earn by driving or delivering', icon: CarFront, onClick: () => showComingSoon('Partner sign-up'), detail: 'Join Camport as a local partner' },
+    { label: 'Legal', icon: Scale, onClick: () => navigate('/settings/support'), detail: 'Terms, privacy and support' },
+  ];
+
   return (
-    <div className="mx-auto min-h-screen max-w-2xl px-6 pb-32 pt-5">
-      <section className="ios-card overflow-hidden p-6 sm:p-8">
-        <div className="flex items-center gap-4">
-          <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white/10 bg-white/5">
-            <img
-              src={user?.avatar_url || 'https://picsum.photos/seed/jobex-neighbor/160/160'}
-              alt=""
-              className="h-full w-full object-cover"
-            />
+    <div className="mx-auto min-h-screen max-w-md bg-background pb-28 text-on-surface">
+      <header className="rounded-b-[30px] bg-[#f7ad7c] px-5 pb-5 pt-5 text-[#191715]">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-bold text-black/60">Hi there 👋</p>
+            <h1 className="mt-1 text-xl font-black tracking-tight">{user?.full_name || 'Camport rider'}</h1>
           </div>
-          <div className="min-w-0">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Your account</p>
-            <h1 className="mt-1 truncate text-2xl font-black tracking-tight text-white">
-              {user?.full_name || 'Welcome, neighbor'}
-            </h1>
-            <p className="mt-1 truncate text-xs text-on-surface-variant">
-              {user?.email || 'Guest account · no sign-in needed to book'}
-            </p>
-          </div>
+          <button onClick={() => navigate('/settings/profile')} aria-label="Edit profile" className="h-12 w-12 overflow-hidden rounded-full border-2 border-white/60 bg-white/40">
+            <img src={user?.avatar_url || 'https://picsum.photos/seed/camport-rider/120/120'} alt="" className="h-full w-full object-cover" />
+          </button>
         </div>
-      </section>
 
-      <section className="mt-8 space-y-3">
-        <h2 className="px-1 text-[10px] font-black uppercase tracking-[0.2em] text-on-surface-variant">Your neighborhood</h2>
-        <button onClick={() => navigate('/orders')} className="ios-card flex w-full items-center gap-4 p-5 text-left transition hover:bg-white/5">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/15 text-primary"><ClipboardList size={20} /></span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-sm font-black text-white">Ride & snack orders</span>
-            <span className="mt-1 block text-xs text-on-surface-variant">View your requests and order details</span>
-          </span>
-          <ArrowRight size={17} className="text-on-surface-variant" />
-        </button>
-        <button onClick={() => navigate('/explore?type=ride')} className="ios-card flex w-full items-center gap-4 p-5 text-left transition hover:bg-white/5">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-success/15 text-success"><Bike size={20} /></span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-sm font-black text-white">Find a local ride</span>
-            <span className="mt-1 block text-xs text-on-surface-variant">Cycle and electric rickshaw options</span>
-          </span>
-          <ArrowRight size={17} className="text-on-surface-variant" />
-        </button>
-        <button onClick={() => navigate('/explore?type=snack')} className="ios-card flex w-full items-center gap-4 p-5 text-left transition hover:bg-white/5">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-warning/15 text-warning"><Sandwich size={20} /></span>
-          <span className="min-w-0 flex-1">
-            <span className="block text-sm font-black text-white">Browse nearby snacks</span>
-            <span className="mt-1 block text-xs text-on-surface-variant">Order for pickup or delivery</span>
-          </span>
-          <ArrowRight size={17} className="text-on-surface-variant" />
-        </button>
-      </section>
-
-      <section className="mt-8 ios-card p-5">
-        <div className="flex items-center gap-4">
-          <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5 text-on-surface-variant"><Settings size={20} /></span>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-black text-white">Account settings</p>
-            <p className="mt-1 text-xs text-on-surface-variant">Manage your profile and preferences</p>
-          </div>
-          <button onClick={() => navigate('/settings')} aria-label="Open account settings" className="rounded-full p-2 text-primary hover:bg-white/5"><ArrowRight size={17} /></button>
+        <div className="mt-5 grid grid-cols-3 gap-2">
+          {quickActions.map(({ label, icon: Icon, onClick }) => (
+            <button key={label} onClick={onClick} className="flex h-[72px] flex-col items-center justify-center gap-1.5 rounded-2xl bg-[#20201f] text-white transition active:scale-95">
+              <Icon size={19} />
+              <span className="text-[11px] font-bold">{label}</span>
+            </button>
+          ))}
         </div>
+      </header>
+
+      <section className="px-5 pt-3">
+        {menuItems.map(({ label, icon: Icon, onClick, detail }) => (
+          <button key={label} onClick={onClick} className="flex w-full items-center gap-3 border-b border-white/10 py-4 text-left">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/5 text-white/65"><Icon size={16} /></span>
+            <span className="min-w-0 flex-1">
+              <span className="block text-sm font-semibold text-white/90">{label}</span>
+              <span className="mt-0.5 block text-[10px] text-white/40">{detail}</span>
+            </span>
+            <ChevronRight size={17} className="text-white/35" />
+          </button>
+        ))}
       </section>
 
-      <div className="mt-8">
+      <footer className="px-5 pt-8">
         {user ? (
-          <Button onClick={handleSignOut} variant="ghost" className="h-12 w-full gap-2 rounded-2xl border border-white/10 text-error">
-            <LogOut size={17} /> Sign out
+          <Button onClick={handleSignOut} variant="ghost" className="h-11 w-full gap-2 rounded-xl border border-white/10 text-white/60">
+            <LogOut size={15} /> Sign out
           </Button>
         ) : (
-          <Button onClick={() => navigate('/login')} variant="ghost" className="h-12 w-full gap-2 rounded-2xl border border-white/10 text-on-surface-variant">
-            <LogIn size={17} /> Sign in (optional)
+          <Button onClick={() => navigate('/login')} variant="ghost" className="h-11 w-full gap-2 rounded-xl border border-white/10 text-white/60">
+            <LogIn size={15} /> Sign in
           </Button>
         )}
-      </div>
+        <p className="mt-6 text-center text-[9px] font-bold uppercase tracking-[0.3em] text-white/25">Camport · Move easy</p>
+      </footer>
     </div>
   );
 };
