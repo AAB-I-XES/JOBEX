@@ -22,7 +22,7 @@ const Orders: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-black tracking-tight">Activity <span aria-hidden="true">◷</span></h1>
-            <p className="mt-1 text-xs font-semibold text-black/55">Past trips & orders</p>
+            <p className="mt-1 text-xs font-semibold text-black/55">Past trips, rentals & orders</p>
           </div>
           <button onClick={() => navigate('/profile')} aria-label="Open profile" className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 bg-white/40">
             <span className="text-sm font-black">C</span>
@@ -49,7 +49,7 @@ const Orders: React.FC = () => {
               {latestBooking?.destination || latestBooking?.pickup || 'Ready for your next trip?'}
             </p>
             <p className="mt-0.5 text-[10px] text-white/60">
-              {latestBooking ? `${latestBooking.serviceName} · ${latestBooking.status}` : 'Book a cycle or e-rickshaw nearby'}
+              {latestBooking ? `${latestBooking.serviceName} · ${latestBooking.status}` : 'Book an e-rickshaw or rent a cycle nearby'}
             </p>
           </div>
         </button>
@@ -66,8 +66,8 @@ const Orders: React.FC = () => {
         ) : bookings.length ? (
           <div>
             {bookings.map((booking) => {
-              const Icon = booking.type === 'ride' ? Bike : Sandwich;
-              const location = booking.destination || booking.pickup || booking.fulfillment;
+              const Icon = booking.type === 'snack' ? Sandwich : Bike;
+              const location = booking.type === 'rent' ? booking.pickup : booking.destination || booking.pickup || booking.fulfillment;
               return (
                 <article key={booking.id} className="flex items-center gap-3 border-b border-white/10 py-3.5">
                   <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#292928] text-white/80">
@@ -76,7 +76,7 @@ const Orders: React.FC = () => {
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-bold text-white">{location}</p>
                     <p className="mt-1 truncate text-[10px] font-medium text-white/45">
-                      {booking.serviceName} · {new Date(booking.createdAt).toLocaleString()}
+                      {booking.type === 'rent' ? `${booking.quantity} ${booking.quantity === 1 ? 'hour' : 'hours'} · ` : ''}{booking.serviceName} · {new Date(booking.createdAt).toLocaleString()}
                     </p>
                   </div>
                   <div className="text-right">
@@ -93,7 +93,7 @@ const Orders: React.FC = () => {
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary"><Clock3 size={18} /></span>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-white">Your activity will show up here</p>
-                <p className="mt-1 text-[11px] text-white/45">Your rides and food orders, all in one place.</p>
+                <p className="mt-1 text-[11px] text-white/45">Your rides, rentals and food orders, all in one place.</p>
               </div>
             </div>
             <button onClick={() => navigate('/')} className="mt-4 flex w-full items-center justify-between rounded-xl bg-white/5 px-4 py-3 text-xs font-bold text-primary">

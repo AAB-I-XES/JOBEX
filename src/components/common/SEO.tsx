@@ -12,7 +12,7 @@ interface SEOProps {
 const SEO: React.FC<SEOProps> = ({ 
   title = "Camport | Rides, food & deliveries",
   description = "Book neighborhood rides and order local food with Camport.",
-  keywords = "cycle rickshaw, e-rickshaw, local rides, snacks, neighborhood delivery",
+  keywords = "cycle rental, e-rickshaw, local rides, snacks, neighborhood delivery",
   image = "/og-image.jpg",
   url = window.location.href
 }) => {

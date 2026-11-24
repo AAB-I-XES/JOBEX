@@ -1,4 +1,4 @@
-export type ServiceType = 'ride' | 'snack';
+export type ServiceType = 'ride' | 'snack' | 'rent';
 
 export interface MarketplaceService {
   id: string;
@@ -23,7 +23,7 @@ export interface Booking {
   quantity: number;
   pickup: string;
   destination: string;
-  fulfillment: 'ride' | 'delivery' | 'pickup';
+  fulfillment: 'ride' | 'delivery' | 'pickup' | 'rental';
   status: 'Requested';
   createdAt: string;
 }

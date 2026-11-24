@@ -18,6 +18,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
   const [quantity, setQuantity] = useState(1);
   const [fulfillment, setFulfillment] = useState<'delivery' | 'pickup'>('delivery');
   const isRide = service.type === 'ride';
+  const isRental = service.type === 'rent';
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -28,16 +29,16 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
       type: service.type,
       amount: service.price * quantity,
       quantity,
-      pickup: isRide ? pickup.trim() : fulfillment === 'delivery' ? pickup.trim() : 'Store pickup',
+      pickup: isRide || isRental ? pickup.trim() : fulfillment === 'delivery' ? pickup.trim() : 'Store pickup',
       destination: isRide ? destination.trim() : '',
-      fulfillment: isRide ? 'ride' : fulfillment,
+      fulfillment: isRide ? 'ride' : isRental ? 'rental' : fulfillment,
       status: 'Requested',
       createdAt: new Date().toISOString(),
     };
 
     try {
       saveBooking(booking);
-      toast.success(isRide ? 'Ride request placed' : 'Snack order placed');
+      toast.success(isRide ? 'Ride request placed' : isRental ? 'Cycle rental request placed' : 'Snack order placed');
       onBooked();
     } catch (error) {
       console.error('Unable to save booking:', error);
@@ -58,7 +59,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
         <div className="mb-6 flex items-start justify-between">
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">
-              {isRide ? 'Ride booking' : 'Snack order'}
+              {isRide ? 'Ride booking' : isRental ? 'Cycle rental' : 'Snack order'}
             </p>
             <h2 id="booking-title" className="mt-1 text-2xl font-black tracking-tight text-white">{service.name}</h2>
           </div>
@@ -68,7 +69,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {isRide ? (
+          {isRide && (
             <>
               <label className="block">
                 <span className="mb-2 block text-xs font-bold text-on-surface-variant">Pickup point</span>
@@ -85,7 +86,19 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
                 </span>
               </label>
             </>
-          ) : (
+          )}
+
+          {isRental && (
+            <label className="block">
+              <span className="mb-2 block text-xs font-bold text-on-surface-variant">Pickup location</span>
+              <span className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 px-4">
+                <MapPin size={16} className="shrink-0 text-success" />
+                <input required value={pickup} onChange={(event) => setPickup(event.target.value)} placeholder="Where will you collect the cycle?" className="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600" />
+              </span>
+            </label>
+          )}
+
+          {service.type === 'snack' && (
             <>
               <div className="rounded-2xl bg-black/20 p-1">
                 {(['delivery', 'pickup'] as const).map((option) => (
@@ -108,18 +121,21 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
                   </span>
                 </label>
               )}
-              <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-black/20 p-4">
-                <div>
-                  <p className="text-sm font-bold text-white">Quantity</p>
-                  <p className="text-xs text-on-surface-variant">₹{service.price} each</p>
-                </div>
-                <div className="flex items-center gap-4">
-                  <button type="button" aria-label="Decrease quantity" disabled={quantity <= 1} onClick={() => setQuantity((value) => value - 1)} className="rounded-full bg-white/5 p-2 text-white disabled:opacity-30"><Minus size={14} /></button>
-                  <span className="w-4 text-center text-sm font-black text-white">{quantity}</span>
-                  <button type="button" aria-label="Increase quantity" onClick={() => setQuantity((value) => value + 1)} className="rounded-full bg-white/5 p-2 text-white"><Plus size={14} /></button>
-                </div>
-              </div>
             </>
+          )}
+
+          {!isRide && (
+            <div className="flex items-center justify-between rounded-2xl border border-white/5 bg-black/20 p-4">
+              <div>
+                <p className="text-sm font-bold text-white">{isRental ? 'Rental duration' : 'Quantity'}</p>
+                <p className="text-xs text-on-surface-variant">₹{service.price} {isRental ? service.priceUnit : 'each'}</p>
+              </div>
+              <div className="flex items-center gap-4">
+                <button type="button" aria-label={isRental ? 'Decrease rental hours' : 'Decrease quantity'} disabled={quantity <= 1} onClick={() => setQuantity((value) => value - 1)} className="rounded-full bg-white/5 p-2 text-white disabled:opacity-30"><Minus size={14} /></button>
+                <span className="text-center text-sm font-black text-white">{quantity}{isRental ? ` ${quantity === 1 ? 'hour' : 'hours'}` : ''}</span>
+                <button type="button" aria-label={isRental ? 'Increase rental hours' : 'Increase quantity'} onClick={() => setQuantity((value) => value + 1)} className="rounded-full bg-white/5 p-2 text-white"><Plus size={14} /></button>
+              </div>
+            </div>
           )}
 
           <div className="flex items-center justify-between border-t border-white/5 pt-4">
@@ -128,11 +144,11 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
               <p className="text-2xl font-black text-white">₹{service.price * quantity}</p>
             </div>
             <button type="submit" className="rounded-full bg-primary px-6 py-3.5 text-sm font-black text-white shadow-lg shadow-primary/20 active:scale-95">
-              {isRide ? 'Request ride' : 'Place order'}
+              {isRide ? 'Request ride' : isRental ? 'Request rental' : 'Place order'}
             </button>
           </div>
           <p className="text-center text-[10px] leading-4 text-on-surface-variant">
-            Demo request only. No driver, store, or payment provider is connected yet.
+            Demo request only. No local rental partner, driver, store, or payment provider is connected yet.
           </p>
         </form>
       </section>

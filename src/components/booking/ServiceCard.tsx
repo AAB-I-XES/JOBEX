@@ -47,7 +47,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onSelect }) => (
           onClick={() => onSelect(service)}
           className="flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-black text-white shadow-lg shadow-primary/20 transition hover:brightness-110 active:scale-95"
         >
-          {service.type === 'ride' ? 'Book ride' : 'Order'} <ArrowUpRight size={14} />
+          {service.type === 'ride' ? 'Book ride' : service.type === 'rent' ? 'Rent cycle' : 'Order'} <ArrowUpRight size={14} />
         </button>
       </div>
     </div>

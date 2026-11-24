@@ -8,12 +8,12 @@ const isBooking = (value: unknown): value is Booking => {
   return typeof booking.id === 'string' &&
     typeof booking.serviceId === 'string' &&
     typeof booking.serviceName === 'string' &&
-    (booking.type === 'ride' || booking.type === 'snack') &&
+    (booking.type === 'ride' || booking.type === 'snack' || booking.type === 'rent') &&
     typeof booking.amount === 'number' &&
     typeof booking.quantity === 'number' &&
     typeof booking.pickup === 'string' &&
     typeof booking.destination === 'string' &&
-    (booking.fulfillment === 'ride' || booking.fulfillment === 'delivery' || booking.fulfillment === 'pickup') &&
+    (booking.fulfillment === 'ride' || booking.fulfillment === 'delivery' || booking.fulfillment === 'pickup' || booking.fulfillment === 'rental') &&
     booking.status === 'Requested' &&
     typeof booking.createdAt === 'string';
 };
