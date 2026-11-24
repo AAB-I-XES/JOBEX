@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -14,6 +14,8 @@
     "@splinetool/runtime": "^1.12.81",
     "@supabase/supabase-js": "^2.103.0",
     "@tailwindcss/vite": "^4.2.2",
+    "@types/google.maps": "^3.67.0",
+    "@vis.gl/react-google-maps": "^1.10.2",
     "clsx": "^2.1.1",
     "dexie": "^4.4.2",
     "framer-motion": "^12.38.0",

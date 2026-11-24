@@ -14,6 +14,11 @@ export interface MarketplaceService {
   badge?: string;
 }
 
+export interface LatLngPoint {
+  lat: number;
+  lng: number;
+}
+
 export interface Booking {
   id: string;
   serviceId: string;
@@ -23,6 +28,10 @@ export interface Booking {
   quantity: number;
   pickup: string;
   destination: string;
+  pickupCoords?: LatLngPoint;
+  destinationCoords?: LatLngPoint;
+  distanceText?: string;
+  durationText?: string;
   fulfillment: 'ride' | 'delivery' | 'pickup' | 'rental';
   status: 'Requested';
   createdAt: string;

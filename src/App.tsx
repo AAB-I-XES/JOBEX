@@ -1,9 +1,10 @@
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import MainLayout from './components/layout/MainLayout';
 import { useAuth } from './hooks/api/useAuth';
 import AuthGuard from './components/common/AuthGuard';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { MapsProvider } from './components/maps/MapsProvider';
 
 // Lazy load pages
 const Home = lazy(() => import('./pages/Home'));
@@ -36,11 +37,39 @@ import SavedGigs from './pages/SavedGigs';
 import TransactionHistory from './pages/TransactionHistory';
 
 const App: React.FC = () => {
+  const [mapsQuotaExceeded, setMapsQuotaExceeded] = useState(false);
+
+  useEffect(() => {
+    const handleQuotaExceeded = () => setMapsQuotaExceeded(true);
+    window.addEventListener('gmp-quota-exceeded', handleQuotaExceeded);
+    return () => {
+      window.removeEventListener('gmp-quota-exceeded', handleQuotaExceeded);
+    };
+  }, []);
+
   return (
     <ErrorBoundary>
-      <Router>
-        <AppContent />
-      </Router>
+      <MapsProvider>
+        {mapsQuotaExceeded && (
+          <div className="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm">
+            <span>
+              Google Maps Platform quota reached. If you are the app owner, visit{' '}
+              <a
+                href="https://developers.google.com/maps/ai/ai-studio?utm_campaign=gmp_mcp_codeassist_v1_aistudio#quota_exceeded_errors"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-semibold text-amber-950 hover:text-amber-800"
+              >
+                maps developer site
+              </a>{' '}
+              for instructions to update your account.
+            </span>
+          </div>
+        )}
+        <Router>
+          <AppContent />
+        </Router>
+      </MapsProvider>
     </ErrorBoundary>
   );
 };

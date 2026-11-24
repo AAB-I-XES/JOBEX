@@ -5,8 +5,11 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BookingDialog from '../components/booking/BookingDialog';
+import NeighborhoodExplorerMap from '../components/maps/NeighborhoodExplorerMap';
+import PlaceAutocompleteInput from '../components/maps/PlaceAutocompleteInput';
 import { services } from '../data/marketplace';
-import type { MarketplaceService } from '../types/booking';
+import type { SelectedPlaceValue } from '../lib/googleMaps';
+import type { LatLngPoint, MarketplaceService } from '../types/booking';
 
 const serviceCategories = [
   { id: 'ride', title: 'Book a ride', subtitle: 'E-rickshaw nearby', icon: CarFront, type: 'ride' },
@@ -22,14 +25,17 @@ const recentPlaces = [
 
 const Home: React.FC = () => {
   const [destination, setDestination] = useState('');
+  const [pickupPlace, setPickupPlace] = useState<SelectedPlaceValue | null>(null);
   const [selectedService, setSelectedService] = useState<MarketplaceService | null>(null);
   const [bookingDestination, setBookingDestination] = useState('');
+  const [bookingDestinationCoords, setBookingDestinationCoords] = useState<LatLngPoint | null>(null);
   const navigate = useNavigate();
 
-  const openRideBooking = (dropoff = '') => {
+  const openRideBooking = (dropoff = '', dropoffCoords: LatLngPoint | null = null) => {
     const ride = services.find((service) => service.id === 'electric-rickshaw');
     if (ride) {
       setBookingDestination(dropoff);
+      setBookingDestinationCoords(dropoffCoords);
       setSelectedService(ride);
     }
   };
@@ -38,6 +44,11 @@ const Home: React.FC = () => {
     event.preventDefault();
     const search = destination.trim();
     navigate(`/services?type=ride${search ? `&destination=${encodeURIComponent(search)}` : ''}`);
+  };
+
+  const handleSearchPlaceSelect = (place: SelectedPlaceValue) => {
+    setDestination(place.address);
+    openRideBooking(place.address, place.location ?? null);
   };
 
   return (
@@ -54,8 +65,8 @@ const Home: React.FC = () => {
             </span>
             <span className="min-w-0">
               <span className="block text-[9px] font-bold uppercase tracking-[0.18em] text-on-surface-variant">Pickup location</span>
-              <span className="flex items-center gap-1 text-sm font-extrabold text-on-surface">
-                Choose your pickup <ChevronDown size={14} />
+              <span className="flex items-center gap-1 truncate text-sm font-extrabold text-on-surface">
+                <span className="truncate">{pickupPlace?.address || 'Choose your pickup'}</span> <ChevronDown size={14} className="shrink-0" />
               </span>
             </span>
           </button>
@@ -79,18 +90,23 @@ const Home: React.FC = () => {
           </div>
         </div>
 
-        <form onSubmit={handleSearch} className="ios-card mt-5 flex h-12 items-center gap-3 px-4">
-          <Search size={18} className="shrink-0 text-on-surface-variant" />
-          <input
-            value={destination}
-            onChange={(event) => setDestination(event.target.value)}
-            placeholder="Where do you want to go?"
-            aria-label="Ride destination"
-            className="min-w-0 flex-1 bg-transparent text-sm font-medium text-on-surface outline-none placeholder:text-on-surface-variant"
-          />
-          <span className="flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold text-primary">
-            <Clock3 size={12} /> Now
-          </span>
+        <form onSubmit={handleSearch} className="mt-5">
+          <div className="ios-card flex h-12 items-center gap-3 px-4">
+            <PlaceAutocompleteInput
+              value={destination}
+              onChange={setDestination}
+              onPlaceSelect={handleSearchPlaceSelect}
+              placeholder="Where do you want to go?"
+              ariaLabel="Ride destination"
+              locationBias={pickupPlace?.location ?? null}
+              icon={<Search size={18} className="shrink-0 text-on-surface-variant" />}
+              wrapperClassName="flex flex-1 items-center gap-3"
+              inputClassName="min-w-0 flex-1 bg-transparent text-sm font-medium text-on-surface outline-none placeholder:text-on-surface-variant"
+            />
+            <span className="flex shrink-0 items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold text-primary">
+              <Clock3 size={12} /> Now
+            </span>
+          </div>
         </form>
       </header>
 
@@ -117,6 +133,16 @@ const Home: React.FC = () => {
           </svg>
         </div>
       </section>
+
+      <div className="mt-7">
+        <NeighborhoodExplorerMap
+          pickupPlace={pickupPlace}
+          onPickupLocated={setPickupPlace}
+          onSelectDestination={(place) =>
+            openRideBooking(place.address, place.location ?? null)
+          }
+        />
+      </div>
 
       <div className="mt-7 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="space-y-8">
@@ -222,7 +248,10 @@ const Home: React.FC = () => {
       {selectedService && (
         <BookingDialog
           service={selectedService}
+          defaultPickup={pickupPlace?.address ?? ''}
+          defaultPickupCoords={pickupPlace?.location ?? null}
           defaultDestination={bookingDestination}
+          defaultDestinationCoords={bookingDestinationCoords}
           onClose={() => setSelectedService(null)}
           onBooked={() => {
             setSelectedService(null);

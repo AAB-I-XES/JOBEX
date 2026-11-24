@@ -1,25 +1,55 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { CreditCard, MapPin, Minus, Plus, Star, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import type { Booking, MarketplaceService } from '../../types/booking';
+import type { Booking, LatLngPoint, MarketplaceService } from '../../types/booking';
 import { saveBooking } from '../../utils/bookings';
-import RouteMapPreview from '../common/RouteMapPreview';
+import RouteMapPreview, { type RouteMetrics } from '../common/RouteMapPreview';
+import PlaceAutocompleteInput from '../maps/PlaceAutocompleteInput';
+import type { SelectedPlaceValue } from '../../lib/googleMaps';
 
 interface BookingDialogProps {
   service: MarketplaceService;
+  defaultPickup?: string;
+  defaultPickupCoords?: LatLngPoint | null;
   defaultDestination?: string;
+  defaultDestinationCoords?: LatLngPoint | null;
   onClose: () => void;
   onBooked: () => void;
 }
 
-const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestination = '', onClose, onBooked }) => {
-  const [pickup, setPickup] = useState('');
+const BookingDialog: React.FC<BookingDialogProps> = ({
+  service,
+  defaultPickup = '',
+  defaultPickupCoords = null,
+  defaultDestination = '',
+  defaultDestinationCoords = null,
+  onClose,
+  onBooked,
+}) => {
+  const [pickup, setPickup] = useState(defaultPickup);
+  const [pickupCoords, setPickupCoords] = useState<LatLngPoint | null>(defaultPickupCoords);
   const [destination, setDestination] = useState(defaultDestination);
+  const [destinationCoords, setDestinationCoords] = useState<LatLngPoint | null>(defaultDestinationCoords);
+  const [routeMetrics, setRouteMetrics] = useState<RouteMetrics | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [fulfillment, setFulfillment] = useState<'delivery' | 'pickup'>('delivery');
   const isRide = service.type === 'ride';
   const isRental = service.type === 'rent';
+
+  const handlePickupPlace = useCallback((place: SelectedPlaceValue) => {
+    setPickup(place.address);
+    setPickupCoords(place.location ?? null);
+  }, []);
+
+  const handleDestinationPlace = useCallback((place: SelectedPlaceValue) => {
+    setDestination(place.address);
+    setDestinationCoords(place.location ?? null);
+  }, []);
+
+  const handleRouteComputed = useCallback((metrics: RouteMetrics | null) => {
+    setRouteMetrics(metrics);
+  }, []);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -32,6 +62,10 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
       quantity,
       pickup: isRide || isRental ? pickup.trim() : fulfillment === 'delivery' ? pickup.trim() : 'Store pickup',
       destination: isRide ? destination.trim() : '',
+      ...(pickupCoords ? { pickupCoords } : {}),
+      ...(isRide && destinationCoords ? { destinationCoords } : {}),
+      ...(isRide && routeMetrics?.distanceText ? { distanceText: routeMetrics.distanceText } : {}),
+      ...(isRide && routeMetrics?.durationText ? { durationText: routeMetrics.durationText } : {}),
       fulfillment: isRide ? 'ride' : isRental ? 'rental' : fulfillment,
       status: 'Requested',
       createdAt: new Date().toISOString(),
@@ -69,12 +103,16 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
           </button>
         </div>
 
-        {isRide && (
+        {(isRide || isRental) && (
           <div className="mb-5">
             <RouteMapPreview
               pickup={pickup || 'Set pickup point'}
-              destination={destination || 'Choose destination'}
-              className="h-36 rounded-2xl"
+              destination={isRide ? (destination || 'Choose destination') : ''}
+              pickupCoords={pickupCoords}
+              destinationCoords={isRide ? destinationCoords : null}
+              travelMode={isRental ? 'BICYCLING' : 'DRIVING'}
+              onRouteComputed={handleRouteComputed}
+              className="h-44 rounded-2xl"
             />
           </div>
         )}
@@ -87,7 +125,7 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
                 <p className="text-[9px] font-black uppercase tracking-widest text-primary">Choose a ride</p>
                 <p className="mt-1 truncate text-sm font-extrabold text-on-surface">{service.category}</p>
                 <p className="mt-0.5 flex items-center gap-1 text-[10px] text-on-surface-variant">
-                  <Star size={11} className="fill-primary text-primary" /> {service.rating} · {service.eta} pickup
+                  <Star size={11} className="fill-primary text-primary" /> {service.rating} · {routeMetrics?.durationText || `${service.eta} pickup`}
                 </p>
               </div>
               <span className="text-sm font-black text-on-surface">₹{service.price}</span>
@@ -96,31 +134,64 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
 
           {isRide && (
             <>
-              <label className="block">
+              <div className="block">
                 <span className="mb-2 block text-xs font-bold text-on-surface-variant">Pickup point</span>
-                <span className="booking-field flex items-center gap-3 rounded-2xl border border-white/10 px-4">
-                  <MapPin size={16} className="shrink-0 text-success" />
-                  <input required value={pickup} onChange={(event) => setPickup(event.target.value)} placeholder="Enter your pickup location" className="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600" />
-                </span>
-              </label>
-              <label className="block">
+                <PlaceAutocompleteInput
+                  required
+                  value={pickup}
+                  onChange={(next) => {
+                    setPickup(next);
+                    setPickupCoords(null);
+                  }}
+                  onPlaceSelect={handlePickupPlace}
+                  placeholder="Enter your pickup location"
+                  ariaLabel="Pickup point"
+                  showLocateButton
+                  icon={<MapPin size={16} className="shrink-0 text-success" />}
+                  wrapperClassName="booking-field flex items-center gap-3 rounded-2xl border border-white/10 px-4"
+                  inputClassName="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600"
+                />
+              </div>
+              <div className="block">
                 <span className="mb-2 block text-xs font-bold text-on-surface-variant">Drop-off point</span>
-                <span className="booking-field flex items-center gap-3 rounded-2xl border border-white/10 px-4">
-                  <MapPin size={16} className="shrink-0 text-error" />
-                  <input required value={destination} onChange={(event) => setDestination(event.target.value)} placeholder="Where are you going?" className="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600" />
-                </span>
-              </label>
+                <PlaceAutocompleteInput
+                  required
+                  value={destination}
+                  onChange={(next) => {
+                    setDestination(next);
+                    setDestinationCoords(null);
+                  }}
+                  onPlaceSelect={handleDestinationPlace}
+                  placeholder="Where are you going?"
+                  ariaLabel="Drop-off point"
+                  locationBias={pickupCoords}
+                  icon={<MapPin size={16} className="shrink-0 text-error" />}
+                  wrapperClassName="booking-field flex items-center gap-3 rounded-2xl border border-white/10 px-4"
+                  inputClassName="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600"
+                />
+              </div>
             </>
           )}
 
           {isRental && (
-            <label className="block">
+            <div className="block">
               <span className="mb-2 block text-xs font-bold text-on-surface-variant">Pickup location</span>
-              <span className="booking-field flex items-center gap-3 rounded-2xl border border-white/10 px-4">
-                <MapPin size={16} className="shrink-0 text-success" />
-                <input required value={pickup} onChange={(event) => setPickup(event.target.value)} placeholder="Where will you collect the cycle?" className="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600" />
-              </span>
-            </label>
+              <PlaceAutocompleteInput
+                required
+                value={pickup}
+                onChange={(next) => {
+                  setPickup(next);
+                  setPickupCoords(null);
+                }}
+                onPlaceSelect={handlePickupPlace}
+                placeholder="Where will you collect the cycle?"
+                ariaLabel="Pickup location"
+                showLocateButton
+                icon={<MapPin size={16} className="shrink-0 text-success" />}
+                wrapperClassName="booking-field flex items-center gap-3 rounded-2xl border border-white/10 px-4"
+                inputClassName="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600"
+              />
+            </div>
           )}
 
           {service.type === 'snack' && (
@@ -138,13 +209,24 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
                 ))}
               </div>
               {fulfillment === 'delivery' && (
-                <label className="block">
+                <div className="block">
                   <span className="mb-2 block text-xs font-bold text-on-surface-variant">Delivery address</span>
-                  <span className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 px-4">
-                    <MapPin size={16} className="shrink-0 text-primary" />
-                    <input required value={pickup} onChange={(event) => setPickup(event.target.value)} placeholder="Enter your address" className="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600" />
-                  </span>
-                </label>
+                  <PlaceAutocompleteInput
+                    required
+                    value={pickup}
+                    onChange={(next) => {
+                      setPickup(next);
+                      setPickupCoords(null);
+                    }}
+                    onPlaceSelect={handlePickupPlace}
+                    placeholder="Enter your address"
+                    ariaLabel="Delivery address"
+                    showLocateButton
+                    icon={<MapPin size={16} className="shrink-0 text-primary" />}
+                    wrapperClassName="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/20 px-4"
+                    inputClassName="h-12 w-full bg-transparent text-sm text-white outline-none placeholder:text-zinc-600"
+                  />
+                </div>
               )}
             </>
           )}
@@ -170,7 +252,9 @@ const BookingDialog: React.FC<BookingDialogProps> = ({ service, defaultDestinati
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-xs font-bold text-on-surface">Payment method</span>
-                <span className="mt-0.5 block text-[10px] text-on-surface-variant">Cash · demo booking</span>
+                <span className="mt-0.5 block text-[10px] text-on-surface-variant">
+                  {routeMetrics?.distanceText ? `${routeMetrics.distanceText} · ` : ''}Cash · demo booking
+                </span>
               </span>
               <span className="text-[10px] font-bold text-primary">Selected</span>
             </div>

@@ -66,7 +66,10 @@ const Orders: React.FC = () => {
             <RouteMapPreview
               pickup={latestBooking?.pickup || 'Your pickup point'}
               destination={getBookingDestination(latestBooking)}
-              className="h-48 rounded-none lg:h-56"
+              pickupCoords={latestBooking?.pickupCoords ?? null}
+              destinationCoords={latestBooking?.destinationCoords ?? null}
+              travelMode={latestBooking?.type === 'rent' ? 'BICYCLING' : 'DRIVING'}
+              className="h-52 rounded-none lg:h-64"
             />
             <div className="p-5">
               <div className="flex items-center justify-between gap-3">
@@ -85,6 +88,11 @@ const Orders: React.FC = () => {
               <p className="mt-1 text-xs text-on-surface-variant">
                 {latestBooking ? getBookingSubtitle(latestBooking) : 'Book a local ride, rent a cycle, or order something nearby.'}
               </p>
+              {latestBooking && (latestBooking.distanceText || latestBooking.durationText) && (
+                <p className="mt-1.5 text-[11px] font-bold text-primary">
+                  {[latestBooking.distanceText, latestBooking.durationText].filter(Boolean).join(' · ')}
+                </p>
+              )}
 
               {latestBooking ? (
                 <div className="mt-5">
