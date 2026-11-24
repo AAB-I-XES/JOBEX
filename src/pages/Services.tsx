@@ -59,7 +59,7 @@ const Services: React.FC = () => {
               type="button"
               key={category.id}
               onClick={() => selectCategory(category)}
-              className={`group relative h-[112px] overflow-hidden rounded-[19px] border text-left text-white transition active:scale-[0.98] lg:h-44 lg:rounded-3xl ${isSelected ? 'border-primary shadow-[0_0_0_2px_rgba(247,168,115,0.3)]' : 'border-white/5'}`}
+              className={`media-overlay group relative h-[112px] overflow-hidden rounded-[19px] border text-left text-white transition active:scale-[0.98] lg:h-44 lg:rounded-3xl ${isSelected ? 'border-primary shadow-[0_0_0_2px_rgba(247,168,115,0.3)]' : 'border-white/5'}`}
             >
               {service && <img src={service.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-75 transition duration-500 group-hover:scale-105" />}
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-black/20" />

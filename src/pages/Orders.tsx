@@ -29,7 +29,7 @@ const Orders: React.FC = () => {
           </button>
         </div>
 
-        <button onClick={() => navigate('/services?type=ride')} className="relative mt-5 block h-40 w-full overflow-hidden rounded-[22px] bg-[#242423] text-left text-white lg:mt-8 lg:h-64">
+        <button onClick={() => navigate('/services?type=ride')} className="theme-map-card relative mt-5 block h-40 w-full overflow-hidden rounded-[22px] text-left text-white lg:mt-8 lg:h-64">
           <div
             aria-hidden="true"
             className="absolute inset-0 opacity-60"
@@ -39,7 +39,7 @@ const Orders: React.FC = () => {
               backgroundPosition: 'center',
             }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/5" />
+          <div className="activity-map-overlay absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-black/5" />
           <div className="absolute right-8 top-8 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-white shadow-[0_0_0_6px_rgba(247,173,124,0.18)]">
             <MapPin size={15} fill="currentColor" />
           </div>
@@ -70,7 +70,7 @@ const Orders: React.FC = () => {
               const location = booking.type === 'rent' ? booking.pickup : booking.destination || booking.pickup || booking.fulfillment;
               return (
                 <article key={booking.id} className="flex items-center gap-3 border-b border-white/10 py-3.5">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-[#292928] text-white/80">
+                  <div className="theme-icon-surface flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl text-white/80">
                     <Icon size={20} />
                   </div>
                   <div className="min-w-0 flex-1">
@@ -88,7 +88,7 @@ const Orders: React.FC = () => {
             })}
           </div>
         ) : (
-          <div className="mt-3 rounded-2xl border border-white/5 bg-[#20201f] p-5">
+          <div className="theme-card mt-3 rounded-2xl border border-white/5 p-5">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary"><Clock3 size={18} /></span>
               <div className="min-w-0 flex-1">

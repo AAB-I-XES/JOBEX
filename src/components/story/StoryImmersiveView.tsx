@@ -66,7 +66,7 @@ const StoryImmersiveView: React.FC = () => {
   };
 
   if (isLoading || userStories.length === 0) {
-    return <div className="h-screen w-full bg-black flex items-center justify-center">
+    return <div className="media-stage h-screen w-full bg-black flex items-center justify-center">
       <div className="w-10 h-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
     </div>;
   }
@@ -74,7 +74,7 @@ const StoryImmersiveView: React.FC = () => {
   const currentStory = userStories[currentIndex];
 
   return (
-    <div className="h-screen w-full bg-black relative overflow-hidden flex items-center justify-center">
+    <div className="media-stage h-screen w-full bg-black relative overflow-hidden flex items-center justify-center">
       {/* Background Media */}
       <div className="absolute inset-0 z-0">
         {currentStory.media_type === 'video' ? (

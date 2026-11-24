@@ -48,7 +48,7 @@ const Navbar: React.FC = () => {
                 <span className="material-symbols-outlined !text-[20px]">chevron_left</span> Back
              </button>
            ) : (
-             <h1 className={cn("font-black tracking-tighter text-xl transition-all", isScrolled ? "text-white" : "text-white invisible opacity-0")}>
+             <h1 className={cn("font-black tracking-tighter text-xl transition-all text-on-surface", isScrolled ? "" : "invisible opacity-0")}>
                camport
              </h1>
            )}

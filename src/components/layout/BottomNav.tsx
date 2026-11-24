@@ -15,7 +15,7 @@ const BottomNav: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 z-[100] w-full border-t border-white/5 bg-[#191918]/95 pb-safe backdrop-blur-xl lg:bottom-auto lg:right-auto lg:top-0 lg:h-screen lg:w-64 lg:border-r lg:border-t-0 lg:px-5 lg:py-7 lg:pb-0">
+    <nav className="app-nav-surface fixed bottom-0 left-0 z-[100] w-full border-t border-white/5 pb-safe backdrop-blur-xl lg:bottom-auto lg:right-auto lg:top-0 lg:h-screen lg:w-64 lg:border-r lg:border-t-0 lg:px-5 lg:py-7 lg:pb-0">
       <div className="mx-auto flex h-[68px] max-w-md items-center justify-between px-5 lg:h-full lg:max-w-none lg:flex-col lg:items-stretch lg:justify-start lg:px-0">
         <div className="mb-9 hidden px-4 lg:block">
           <p className="text-xl font-black tracking-tight text-white">camport</p>

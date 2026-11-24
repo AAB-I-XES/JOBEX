@@ -29,6 +29,7 @@ begin
 end;
 $$;
 
+drop trigger if exists on_auth_user_created on auth.users;
 drop trigger if exists camport_create_profile_after_auth_user on auth.users;
 create trigger camport_create_profile_after_auth_user
 after insert on auth.users

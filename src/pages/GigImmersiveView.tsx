@@ -57,7 +57,7 @@ const GigImmersiveView: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="h-screen w-full bg-black flex items-center justify-center">
+      <div className="media-stage h-screen w-full bg-black flex items-center justify-center">
         <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin" />
       </div>
     );
@@ -68,7 +68,7 @@ const GigImmersiveView: React.FC = () => {
   const isVideo = /\.(mp4|webm|mov|m4v|avi)(\?|$)/i.test(gig.video_url || gig.thumbnail_url);
 
   return (
-    <div className="h-screen w-full bg-black text-white relative overflow-hidden flex flex-col md:flex-row">
+    <div className="media-stage h-screen w-full bg-black text-white relative overflow-hidden flex flex-col md:flex-row">
       {/* Background Media */}
       <div className="absolute inset-0 z-0">
         {isVideo ? (

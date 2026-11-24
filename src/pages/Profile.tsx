@@ -51,7 +51,7 @@ const Profile: React.FC = () => {
 
         <div className="mt-5 grid grid-cols-3 gap-2">
           {quickActions.map(({ label, icon: Icon, onClick }) => (
-            <button key={label} onClick={onClick} className="flex h-[72px] flex-col items-center justify-center gap-1.5 rounded-2xl bg-[#20201f] text-white transition active:scale-95">
+            <button key={label} onClick={onClick} className="theme-card flex h-[72px] flex-col items-center justify-center gap-1.5 rounded-2xl text-white transition active:scale-95">
               <Icon size={19} />
               <span className="text-[11px] font-bold">{label}</span>
             </button>

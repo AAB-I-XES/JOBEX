@@ -88,7 +88,7 @@ const Home: React.FC = () => {
           ))}
         </section>
 
-        <button onClick={() => navigate('/services')} className="flex w-full items-center gap-3 rounded-2xl border border-white/5 bg-[#20201f] p-4 text-left transition hover:bg-[#292928] lg:self-start lg:p-6">
+        <button onClick={() => navigate('/services')} className="theme-card flex w-full items-center gap-3 rounded-2xl border border-white/5 p-4 text-left transition lg:self-start lg:p-6">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary"><Bike size={19} /></span>
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-bold text-white">Browse Camport services</span>

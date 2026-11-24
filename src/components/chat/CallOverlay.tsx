@@ -270,7 +270,7 @@ const CallOverlay: React.FC<CallOverlayProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-3xl flex flex-col items-center justify-between py-20 px-6 overflow-hidden"
+          className="media-stage fixed inset-0 z-[200] bg-black/95 backdrop-blur-3xl flex flex-col items-center justify-between py-20 px-6 overflow-hidden"
         >
           {/* Background Video/Image (Blurred) */}
           <div className="absolute inset-0 -z-10 opacity-20 blur-2xl">

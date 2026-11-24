@@ -1,10 +1,14 @@
 import React from 'react';
-import { Bell, Lock, CreditCard, ChevronRight, Eye, ShieldCheck, HelpCircle, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { Bell, Lock, CreditCard, ChevronRight, Eye, ShieldCheck, HelpCircle, Trash2, Sun, Moon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 
 const Settings: React.FC = () => {
   const navigate = useNavigate();
+  const [theme, setTheme] = useState<'light' | 'dark'>(() =>
+    document.documentElement.dataset.theme === 'light' ? 'light' : 'dark'
+  );
 
   const sections = [
     {
@@ -38,6 +42,46 @@ const Settings: React.FC = () => {
       <p className="text-on-surface-variant font-medium text-sm mb-10 opacity-60 uppercase tracking-widest animate-ios">Preferences</p>
 
       <div className="space-y-10">
+        <section className="space-y-3 animate-ios">
+          <h2 className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em] px-4">Appearance</h2>
+          <div className="ios-card overflow-hidden">
+            <div className="flex items-center justify-between p-4 px-6">
+              <div className="flex items-center gap-4">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-white shadow-sm">
+                  {theme === 'light' ? <Sun size={16} /> : <Moon size={16} />}
+                </div>
+                <div>
+                  <p className="text-sm font-bold tracking-tight text-white">
+                    {theme === 'light' ? 'Light mode' : 'Dark mode'}
+                  </p>
+                  <p className="mt-0.5 text-[10px] font-medium text-on-surface-variant">
+                    Switch the app appearance
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-label="Use light mode"
+                aria-checked={theme === 'light'}
+                onClick={() => {
+                  const nextTheme = theme === 'light' ? 'dark' : 'light';
+                  localStorage.setItem('camport-theme', nextTheme);
+                  document.documentElement.dataset.theme = nextTheme;
+                  document.querySelector('meta[name="theme-color"]')?.setAttribute(
+                    'content',
+                    nextTheme === 'light' ? '#f5f6f7' : '#f7ad7c'
+                  );
+                  setTheme(nextTheme);
+                }}
+                className={`relative h-6 w-11 rounded-full transition-colors ${theme === 'light' ? 'bg-primary' : 'bg-zinc-700'}`}
+              >
+                <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white transition-transform ${theme === 'light' ? 'translate-x-5' : 'translate-x-0.5'}`} />
+              </button>
+            </div>
+          </div>
+        </section>
+
         {sections.map((section, sIdx) => (
           <div key={sIdx} className="space-y-3 animate-ios" style={{ animationDelay: `${0.1 * (sIdx + 1)}s` }}>
              <h2 className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em] px-4">{section.title}</h2>

@@ -9,7 +9,7 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, onSelect }) => (
   <article className="ios-card overflow-hidden group">
-    <div className="relative h-48 overflow-hidden">
+    <div className="media-overlay relative h-48 overflow-hidden">
       <img
         src={service.image}
         alt={service.name}
