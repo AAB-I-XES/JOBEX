@@ -58,8 +58,9 @@ const Login: React.FC = () => {
     try {
       const { authService } = await import('../features/auth/authService');
       await authService.signInWithGoogle();
-    } catch {
-      toast.error('Google login failed');
+    } catch (error: unknown) {
+      console.error('[Auth] Google OAuth could not start:', error);
+      toast.error(error instanceof Error ? error.message : 'Google login could not start. Check the OAuth provider configuration.');
     }
   };
 
